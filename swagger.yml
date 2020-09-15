@@ -32,79 +32,122 @@ paths:
         200:
           description: OK response
 
-  /v2/things:
+  /legacy_config:
     get:
-      summary: List things
-      operationId: getThings
+      summary: Get Latency Configs for all Databases/Schemas
+               This is primarily for legacy compatibility with APM. For anything else, we should
+               consider adding new endpoints
+      operationId: getAllLegacyConfigs
       parameters: []
       responses:
         200:
-          description: Array of things.
+          description: Configs for all databases + schemas
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/Thing"
+            $ref: "#/definitions/AnalyticsLatencyConfigs"
 
-  /v2/things/{id}:
-    put:
-      summary: Creates or updates a thing.
-      operationId: createOrUpdateThing
-      parameters:
-        - name: thing
-          in: body
-          schema:
-            $ref: "#/definitions/Thing"
-        - name: id
-          in: path
-          required: true
-          type: string
-      responses:
-        200:
-          description: The created or updated thing.
-          schema:
-            $ref: "#/definitions/Thing"
-        400:
-          description: Bad request.
-          schema:
-            $ref: "#/definitions/BadRequest"
-    get:
-      summary: Get a thing by id.
-      operationId: getThing
-      parameters:
-      - name: id
-        in: path
-        type: string
-        required: true
-      responses:
-        200:
-          description: The thing object.
-          schema:
-            $ref: "#/definitions/Thing"
-        404:
-          $ref: "#/responses/NotFound"
-    delete:
-      summary: Delete a thing.
-      operationId: deleteThing
-      parameters:
-      - name: id
-        in: path
-        type: string
-        required: true
-      responses:
-        200:
-          description: OK
-        404:
-          $ref: "#/responses/NotFound"
 
 definitions:
-  Thing:
-    description: provided as an example
+  ThresholdTier:
+    type: string
+    description: Threshold Tiers
+    enum:
+      - "Critical"
+      - "Major"
+      - "Minor"
+      - "None"
+
+  Thresholds:
     type: object
+    description: Thresholds holds values for all of the different thresholds we might want to check against.
+                 Null values are not overridden, empty values are "unset", to not alert at that level.
+                 Otherwise, each `threshold` expects a string formatted Golang duration
     properties:
-      id:
+      critical:
         type: string
-      foo:
+      major:
         type: string
+      minor:
+        type: string
+
+  LatencySpec:
+    type: object
+    description: LatencySpec stores information for a latency check
+    properties:
+      timestampColumn:
+        type: string
+      thresholds:
+        x-nullable: false
+        $ref: "#/definitions/Thresholds"
+
+  TableCheck:
+      description: TableCheck configures a single latency check for a table
+      properties:
+        tableName:
+          type: string
+        tableOwner:
+          type: string
+          description: SchemaOwner associates an owner for a given schema. It can be overridden at the table level. It defaults to eng-deip
+        latencySpec:
+          $ref: "#/definitions/LatencySpec"
+
+  SchemaConfig:
+    type: object
+    description: SchemaConfig configures latency checks by schema
+    properties:
+      schemaName:
+        type: string
+      schemaOwner:
+        type: string
+        description: SchemaOwner associates an owner for a given schema. It can be overridden at the table level. It defaults to eng-deip
+      defaultThresholds:
+        $ref: "#/definitions/Thresholds"
+      defaultTimestampColumn:
+        type: string
+      blacklist:
+        type: array
+        items:
+          type: string
+      whitelist:
+        type: array
+        items:
+          type: string
+      tableOverrides:
+        type: array
+        items:
+          $ref: "#/definitions/TableCheck"
+
+  AnalyticsLatencyConfigs:
+    required:
+      - redshiftProd
+      - redshiftFast
+      - rdsInternal
+      - rdsExternal
+    properties:
+      redshiftProd:
+        type: array
+        items:
+          $ref: "#/definitions/SchemaConfig"
+      redshiftFast:
+        type: array
+        items:
+          $ref: "#/definitions/SchemaConfig"
+      rdsInternal:
+        type: array
+        items:
+          $ref: "#/definitions/SchemaConfig"
+      rdsExternal:
+        type: array
+        items:
+          $ref: "#/definitions/SchemaConfig"
+
+  AnalyticsDatabase:
+    type: string
+    description: Analytics databases, in config
+    enum:
+      - "RedshiftProd"
+      - "RedshiftFast"
+      - "RdsInternal"
+      - "RdsExternal"
 
   ErrorCode:
     type: string
