@@ -5,11 +5,15 @@ executors:
     working_directory: /go/src/github.com/Clever/analytics-latency-config-service
     docker:
     - image: circleci/golang:1.13-stretch-node
+    - image: circleci/postgres:9.4-alpine-ram
+    - image: circleci/mongo:3.2.20-jessie-ram
+      environment:
+        POSTGRES_USER: postgres
 
     environment:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
-
+      POSTGRES_USER: postgres
 
 commands:
   clone-ci-scripts:
@@ -24,8 +28,24 @@ jobs:
     executor: common-executor
     steps:
     - checkout
+    - run:
+        command: sudo apt-get update && sudo apt-get install postgresql
+        name: Install psql
+    - run:
+        command: |-
+          echo Waiting for postgres
+          for i in `seq 1 10`;
+          do
+            nc -z localhost 5432 && echo Success && exit 0
+            echo -n .
+            sleep 1
+          done
+          echo Failed waiting for postgres && exit 1
+        name: Wait for postgres database to be ready
     - run: make install_deps
+    - run: make db-setup
     - run: make build
+    - run: make test
     - persist_to_workspace:
         root: /go/src/github.com/Clever
         paths: "."
@@ -49,10 +69,25 @@ jobs:
     - attach_workspace:
         at: /go/src/github.com/Clever
     - run:
+        command: sudo apt-get update && sudo apt-get install postgresql
+        name: Install psql
+    - run:
+        command: |-
+          echo Waiting for postgres
+          for i in `seq 1 10`;
+          do
+            nc -z localhost 5432 && echo Success && exit 0
+            echo -n .
+            sleep 1
+          done
+          echo Failed waiting for postgres && exit 1
+        name: Wait for postgres database to be ready
+    - run:
         command: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
         name: Set up CircleCI artifacts directories
+    - run: make db-setup
     - run: make test
-  
+
   deploy:
     executor: common-executor
     steps:

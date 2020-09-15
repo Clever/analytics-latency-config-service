@@ -12,16 +12,27 @@ WAG_VERSION := latest
 
 $(eval $(call golang-version-check,1.13))
 
+export POSTGRES_USER?=postgres
+export POSTGRES_HOST?=localhost
+export POSTGRES_PORT?=5432
+export POSTGRES_DB?=alcs-integration
+
 .PHONY: all test build run $(PKGS) generate install_deps
 
 all: test build
 
 test: $(PKGS)
-$(PKGS): golang-test-all-strict-deps
-	$(call golang-test-all-strict,$@)
+$(PKGS): golang-test-all-deps
+	$(call golang-test-all,$@)
+
+db-setup:
+	createdb -h localhost -U postgres alcs-integration
+	psql -h localhost -p 5432 -U postgres alcs-integration -c "CREATE FUNCTION GETDATE() RETURNS timestamp with time zone AS 'SELECT now()' LANGUAGE sql;"
 
 build: generate
 	$(call golang-build,$(PKG),$(EXECUTABLE))
+	mkdir -p bin/config
+	cp config/latency_config.json bin/config/latency_config.json
 
 run: build
 	bin/$(EXECUTABLE)
