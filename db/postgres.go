@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/Clever/analytics-latency-config-service/config"
 
@@ -22,6 +23,7 @@ type Postgres struct {
 type PostgresClient interface {
 	GetClusterName() string
 	GetSession() *sql.DB
+	QueryLatencyTable(schemaName, tableName string) (int64, bool, error)
 }
 
 // PostgresCredentials contains the postgres credentials/information.
@@ -115,4 +117,28 @@ func (c *Postgres) GetClusterName() string {
 // GetSession returns the name of the client Postgres cluster
 func (c *Postgres) GetSession() *sql.DB {
 	return c.session
+}
+
+func (c *Postgres) QueryLatencyTable(schemaName, tableName string) (int64, bool, error) {
+	check := fmt.Sprintf("'%s.%s'", schemaName, tableName)
+	if schemaName == "public" {
+		// We don't always prepend the schema name if it's "public". Check both.
+		check = fmt.Sprintf("%s OR name = '%s'", check, tableName)
+	}
+
+	latencyQuery := fmt.Sprintf("SELECT extract(epoch from last_update) FROM latencies WHERE name = %s", check)
+	var latency sql.NullFloat64
+	err := c.GetSession().QueryRow(latencyQuery).Scan(&latency)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, false, nil
+		}
+		return 0, false, fmt.Errorf("error scanning latency table for %s: %s", check, err)
+	}
+	if !latency.Valid {
+		return 0, false, nil
+	}
+
+	hourDiff := (time.Now().Unix() - int64(latency.Float64)) / 3600
+	return hourDiff, latency.Valid, nil
 }
