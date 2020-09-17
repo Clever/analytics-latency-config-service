@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 
+	"github.com/Clever/analytics-latency-config-service/config"
 	"github.com/Clever/analytics-latency-config-service/controller"
 	"github.com/Clever/analytics-latency-config-service/gen-go/server"
 	"github.com/Clever/wag/swagger"
@@ -12,6 +13,7 @@ import (
 func main() {
 	addr := flag.String("addr", ":6723", "Address to listen at")
 	flag.Parse()
+	config.Init()
 
 	swagger.InitCustomFormats()
 
