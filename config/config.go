@@ -75,8 +75,8 @@ func init() {
 	latencyConfigPath = path.Join(dir, "config/latency_config.json")
 }
 
-// Parse reads environment variables and initializes the config.
-func Parse() {
+// Init reads environment variables and initializes the config.
+func Init() {
 	RedshiftProdHost = requiredEnv("REDSHIFT_PROD_HOST")
 	RedshiftProdPort = requiredEnv("REDSHIFT_PROD_PORT")
 	RedshiftProdDatabase = requiredEnv("REDSHIFT_PROD_DATABASE")
