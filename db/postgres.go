@@ -23,6 +23,7 @@ type Postgres struct {
 type PostgresClient interface {
 	GetClusterName() string
 	GetSession() *sql.DB
+	QueryTableMetadata(schemaName string) (map[string]TableMetadata, error)
 	QueryLatencyTable(schemaName, tableName string) (int64, bool, error)
 }
 
@@ -141,4 +142,45 @@ func (c *Postgres) QueryLatencyTable(schemaName, tableName string) (int64, bool,
 
 	hourDiff := (time.Now().Unix() - int64(latency.Float64)) / 3600
 	return hourDiff, latency.Valid, nil
+}
+
+// TableMetadata contains information about a table in Postgres
+type TableMetadata struct {
+	TableName       string
+	TimestampColumn string
+}
+
+// QueryTableMetadata returns a map of tables
+// belonging to a given schema in Postgres, indexed
+// by table name.
+// It also attempts to infer the timestamp column, by
+// choosing the alphabetically lowest column with a
+// timestamp type. We use this as a heuristic since a
+// lot of our timestamp columns are prefixed with "_".
+func (c *Postgres) QueryTableMetadata(schemaName string) (map[string]TableMetadata, error) {
+	query := fmt.Sprintf(`
+		SELECT table_name, min("column_name")
+		FROM information_schema.columns
+		WHERE table_schema = '%s'
+		AND data_type ILIKE '%%timestamp%%'
+		GROUP BY table_name
+	`, schemaName)
+
+	tableMetadata := make(map[string]TableMetadata)
+	rows, err := c.GetSession().Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var row TableMetadata
+		if err := rows.Scan(&row.TableName, &row.TimestampColumn); err != nil {
+			return tableMetadata, fmt.Errorf("Unable to scan row for schema %s: %s", schemaName, err)
+		}
+
+		tableMetadata[row.TableName] = row
+	}
+
+	return tableMetadata, nil
 }
