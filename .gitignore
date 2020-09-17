@@ -1,0 +1,18 @@
+# osx / sshfs
+._*
+.DS_Store
+
+# emacs / vim
+*~
+\#*\#
+.\#*
+
+vendor
+bin
+
+# don't commit mocks
+mock_*.go
+
+# js
+node_modules
+package-lock.json
