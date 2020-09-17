@@ -78,13 +78,3 @@ alarms:
   severity: minor
   parameters:
     threshold: 0.05
-pod_config:
-  dev:
-    podSelector:
-      production: false
-      function: sso
-    migrationState: deployable
-  prod:
-    podSelector:
-      production: true
-      function: sso
