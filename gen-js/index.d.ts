@@ -145,12 +145,13 @@ declare namespace AnalyticsLatencyConfigService {
     
     type TableCheck = any;
     
-    type ThresholdTier = ("Critical" | "Major" | "Minor" | "None");
+    type ThresholdTier = ("Critical" | "Major" | "Minor" | "Refresh" | "None");
     
     type Thresholds = {
   critical?: string;
   major?: string;
   minor?: string;
+  refresh?: string;
 };
     
   }

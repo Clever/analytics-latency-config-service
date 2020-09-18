@@ -25,6 +25,8 @@ const (
 	ThresholdTierMajor ThresholdTier = "Major"
 	// ThresholdTierMinor captures enum value "Minor"
 	ThresholdTierMinor ThresholdTier = "Minor"
+	// ThresholdTierRefresh captures enum value "Refresh"
+	ThresholdTierRefresh ThresholdTier = "Refresh"
 	// ThresholdTierNone captures enum value "None"
 	ThresholdTierNone ThresholdTier = "None"
 )
@@ -34,7 +36,7 @@ var thresholdTierEnum []interface{}
 
 func init() {
 	var res []ThresholdTier
-	if err := json.Unmarshal([]byte(`["Critical","Major","Minor","None"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["Critical","Major","Minor","Refresh","None"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

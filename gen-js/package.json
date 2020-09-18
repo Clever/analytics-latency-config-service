@@ -1,6 +1,6 @@
 {
   "name": "@clever/analytics-latency-config-service",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Service for surfacing latency config settings for the analytics pipeline.",
   "main": "index.js",
   "dependencies": {

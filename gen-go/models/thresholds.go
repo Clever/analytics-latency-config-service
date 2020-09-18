@@ -24,6 +24,9 @@ type Thresholds struct {
 
 	// minor
 	Minor string `json:"minor,omitempty"`
+
+	// refresh
+	Refresh string `json:"refresh,omitempty"`
 }
 
 // Validate validates this thresholds
