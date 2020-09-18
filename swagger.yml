@@ -4,7 +4,7 @@ info:
   description: Service for surfacing latency config settings for the analytics pipeline.
   # when changing the version here, make sure to run
   # `make generate` to generate clients and server
-  version: 0.1.2
+  version: 0.2.0
   x-npm-package: '@clever/analytics-latency-config-service'
 schemes:
   - http
@@ -119,6 +119,7 @@ definitions:
       - "Critical"
       - "Major"
       - "Minor"
+      - "Refresh"
       - "None"
 
   Thresholds:
@@ -132,6 +133,8 @@ definitions:
       major:
         type: string
       minor:
+        type: string
+      refresh:
         type: string
 
   LatencySpec:
