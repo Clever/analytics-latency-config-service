@@ -60,6 +60,8 @@ declare class AnalyticsLatencyConfigService {
   
   healthCheck(options?: RequestOptions, cb?: Callback<void>): Promise<void>
   
+  getTableLatency(request: models.GetTableLatencyRequest, options?: RequestOptions, cb?: Callback<models.GetTableLatencyResponse>): Promise<models.GetTableLatencyResponse>
+  
   getAllLegacyConfigs(options?: RequestOptions, cb?: Callback<models.AnalyticsLatencyConfigs>): Promise<models.AnalyticsLatencyConfigs>
   
 }
@@ -94,6 +96,13 @@ declare namespace AnalyticsLatencyConfigService {
   constructor(body: ErrorBody);
 }
     
+    class NotFound {
+  code?: models.ErrorCode;
+  message?: string;
+
+  constructor(body: ErrorBody);
+}
+    
   }
 
   namespace Models {
@@ -103,6 +112,21 @@ declare namespace AnalyticsLatencyConfigService {
     type AnalyticsLatencyConfigs = any;
     
     type ErrorCode = ("InvalidID");
+    
+    type GetTableLatencyRequest = {
+  database: AnalyticsDatabase;
+  schema: string;
+  table: string;
+};
+    
+    type GetTableLatencyResponse = {
+  database: AnalyticsDatabase;
+  latency?: number;
+  owner: string;
+  schema: string;
+  table: string;
+  thresholds: Thresholds;
+};
     
     type LatencySpec = {
   thresholds?: Thresholds;

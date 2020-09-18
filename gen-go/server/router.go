@@ -229,6 +229,13 @@ func newRouter(c Controller) *mux.Router {
 		r = r.WithContext(ctx)
 	})
 
+	router.Methods("GET").Path("/latency").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger.FromContext(r.Context()).AddContext("op", "getTableLatency")
+		h.GetTableLatencyHandler(r.Context(), w, r)
+		ctx := WithTracingOpName(r.Context(), "getTableLatency")
+		r = r.WithContext(ctx)
+	})
+
 	router.Methods("GET").Path("/legacy_config").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger.FromContext(r.Context()).AddContext("op", "getAllLegacyConfigs")
 		h.GetAllLegacyConfigsHandler(r.Context(), w, r)

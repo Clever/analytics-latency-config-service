@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/Clever/analytics-latency-config-service/gen-go/models"
 )
@@ -28,18 +29,21 @@ func CombineThresholdsWithDefaults(overrides *models.Thresholds, defaults models
 }
 
 // GetThresholdTierValue returns the threshold value for the latency type
-func GetThresholdTierValue(threshold *models.Thresholds, tier models.ThresholdTier) (string, error) {
+func GetThresholdTierValue(thresholds *models.Thresholds, tier models.ThresholdTier) (string, error) {
+	if thresholds == nil {
+		return NoLatencyAlert, fmt.Errorf("cannot get %s threshold value from a nil thresholds", tier)
+	}
 	switch tier {
 	case models.ThresholdTierCritical:
-		return threshold.Critical, nil
+		return thresholds.Critical, nil
 	case models.ThresholdTierMajor:
-		return threshold.Major, nil
+		return thresholds.Major, nil
 	case models.ThresholdTierMinor:
-		return threshold.Minor, nil
+		return thresholds.Minor, nil
 	case models.ThresholdTierNone:
 		fallthrough // there's no field for none on the thresholds object
 	default:
-		return NoLatencyAlert, fmt.Errorf("unexpected threshold tier")
+		return NoLatencyAlert, fmt.Errorf("unexpected threshold tier: %s", tier)
 	}
 }
 
@@ -55,10 +59,11 @@ func GetThresholdTierErrorValue(tier models.ThresholdTier) (int, error) {
 	case models.ThresholdTierNone:
 		return 0, nil
 	default:
-		return 0, fmt.Errorf("unexpected threshold tier")
+		return 0, fmt.Errorf("unexpected threshold tier: %s", tier)
 	}
 }
 
+// GetDatabaseConfig returns the database-specific config
 func GetDatabaseConfig(configs models.AnalyticsLatencyConfigs, database models.AnalyticsDatabase) ([]*models.SchemaConfig, error) {
 	switch database {
 	case models.AnalyticsDatabaseRedshiftProd:
@@ -70,6 +75,29 @@ func GetDatabaseConfig(configs models.AnalyticsLatencyConfigs, database models.A
 	case models.AnalyticsDatabaseRdsExternal:
 		return configs.RdsExternal, nil
 	default:
-		return nil, fmt.Errorf("unexpected database config")
+		return nil, fmt.Errorf("unexpected database config: %s", database)
 	}
+}
+
+// CheckThresholdCrossed checks if a latency crosses a particular tier for the latency thresholds
+func CheckThresholdCrossed(latency float64, thresholds *models.Thresholds, tier models.ThresholdTier) (bool, string, error) {
+	limit, err := GetThresholdTierValue(thresholds, tier)
+	if err != nil {
+		return false, "", err
+	}
+
+	// Override to not check threshold tier
+	if limit == NoLatencyAlert {
+		return false, NoLatencyAlert, nil
+	}
+
+	duration, err := time.ParseDuration(limit)
+	if err != nil {
+		return false, "", fmt.Errorf("could not parse duration %s: %s", limit, err.Error())
+	}
+
+	if latency > duration.Hours() {
+		return true, limit, nil
+	}
+	return false, limit, nil
 }

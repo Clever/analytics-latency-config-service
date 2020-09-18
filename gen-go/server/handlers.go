@@ -132,6 +132,126 @@ func newHealthCheckInput(r *http.Request) (*models.HealthCheckInput, error) {
 	return &input, nil
 }
 
+// statusCodeForGetTableLatency returns the status code corresponding to the returned
+// object. It returns -1 if the type doesn't correspond to anything.
+func statusCodeForGetTableLatency(obj interface{}) int {
+
+	switch obj.(type) {
+
+	case *models.BadRequest:
+		return 400
+
+	case *models.GetTableLatencyResponse:
+		return 200
+
+	case *models.InternalError:
+		return 500
+
+	case *models.NotFound:
+		return 404
+
+	case models.BadRequest:
+		return 400
+
+	case models.GetTableLatencyResponse:
+		return 200
+
+	case models.InternalError:
+		return 500
+
+	case models.NotFound:
+		return 404
+
+	default:
+		return -1
+	}
+}
+
+func (h handler) GetTableLatencyHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+
+	sp := opentracing.SpanFromContext(ctx)
+
+	input, err := newGetTableLatencyInput(r)
+	if err != nil {
+		logger.FromContext(ctx).AddContext("error", err.Error())
+		http.Error(w, jsonMarshalNoError(models.BadRequest{Message: err.Error()}), http.StatusBadRequest)
+		return
+	}
+
+	if input != nil {
+		err = input.Validate(nil)
+	}
+
+	if err != nil {
+		logger.FromContext(ctx).AddContext("error", err.Error())
+		http.Error(w, jsonMarshalNoError(models.BadRequest{Message: err.Error()}), http.StatusBadRequest)
+		return
+	}
+
+	resp, err := h.GetTableLatency(ctx, input)
+
+	if err != nil {
+		logger.FromContext(ctx).AddContext("error", err.Error())
+		if btErr, ok := err.(*errors.Error); ok {
+			logger.FromContext(ctx).AddContext("stacktrace", string(btErr.Stack()))
+		} else if xerr, ok := err.(xerrors.Formatter); ok {
+			logger.FromContext(ctx).AddContext("frames", fmt.Sprintf("%+v", xerr))
+		}
+		statusCode := statusCodeForGetTableLatency(err)
+		if statusCode == -1 {
+			err = models.InternalError{Message: err.Error()}
+			statusCode = 500
+		}
+		http.Error(w, jsonMarshalNoError(err), statusCode)
+		return
+	}
+
+	jsonSpan, _ := opentracing.StartSpanFromContext(ctx, "json-response-marshaling")
+	defer jsonSpan.Finish()
+
+	respBytes, err := json.Marshal(resp)
+	if err != nil {
+		logger.FromContext(ctx).AddContext("error", err.Error())
+		http.Error(w, jsonMarshalNoError(models.InternalError{Message: err.Error()}), http.StatusInternalServerError)
+		return
+	}
+
+	sp.LogFields(log.Int("response-size-bytes", len(respBytes)))
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCodeForGetTableLatency(resp))
+	w.Write(respBytes)
+
+}
+
+// newGetTableLatencyInput takes in an http.Request an returns the input struct.
+func newGetTableLatencyInput(r *http.Request) (*models.GetTableLatencyRequest, error) {
+	sp := opentracing.SpanFromContext(r.Context())
+	_ = sp
+
+	var err error
+	_ = err
+
+	data, err := ioutil.ReadAll(r.Body)
+	if len(data) == 0 {
+		return nil, errors.New("request body is required, but was empty")
+	}
+	sp.LogFields(log.Int("request-size-bytes", len(data)))
+
+	if len(data) > 0 {
+		jsonSpan, _ := opentracing.StartSpanFromContext(r.Context(), "json-request-marshaling")
+		defer jsonSpan.Finish()
+
+		var input models.GetTableLatencyRequest
+		if err := json.NewDecoder(bytes.NewReader(data)).Decode(&input); err != nil {
+			return nil, err
+		}
+		return &input, nil
+
+	}
+
+	return nil, nil
+}
+
 // statusCodeForGetAllLegacyConfigs returns the status code corresponding to the returned
 // object. It returns -1 if the type doesn't correspond to anything.
 func statusCodeForGetAllLegacyConfigs(obj interface{}) int {

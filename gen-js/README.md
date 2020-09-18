@@ -9,6 +9,7 @@ analytics-latency-config-service client library.
         * [new AnalyticsLatencyConfigService(options)](#new_module_analytics-latency-config-service--AnalyticsLatencyConfigService_new)
         * _instance_
             * [.healthCheck([options], [cb])](#module_analytics-latency-config-service--AnalyticsLatencyConfigService+healthCheck) ⇒ <code>Promise</code>
+            * [.getTableLatency(request, [options], [cb])](#module_analytics-latency-config-service--AnalyticsLatencyConfigService+getTableLatency) ⇒ <code>Promise</code>
             * [.getAllLegacyConfigs([options], [cb])](#module_analytics-latency-config-service--AnalyticsLatencyConfigService+getAllLegacyConfigs) ⇒ <code>Promise</code>
         * _static_
             * [.RetryPolicies](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.RetryPolicies)
@@ -18,6 +19,7 @@ analytics-latency-config-service client library.
             * [.Errors](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors)
                 * [.BadRequest](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors.BadRequest) ⇐ <code>Error</code>
                 * [.InternalError](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors.InternalError) ⇐ <code>Error</code>
+                * [.NotFound](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors.NotFound) ⇐ <code>Error</code>
             * [.DefaultCircuitOptions](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.DefaultCircuitOptions)
 
 <a name="exp_module_analytics-latency-config-service--AnalyticsLatencyConfigService"></a>
@@ -61,6 +63,25 @@ Checks if the service is healthy
 
 | Param | Type | Description |
 | --- | --- | --- |
+| [options] | <code>object</code> |  |
+| [options.timeout] | <code>number</code> | A request specific timeout |
+| [options.span] | [<code>Span</code>](https://doc.esdoc.org/github.com/opentracing/opentracing-javascript/class/src/span.js~Span.html) | An OpenTracing span - For example from the parent request |
+| [options.retryPolicy] | [<code>RetryPolicies</code>](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.RetryPolicies) | A request specific retryPolicy |
+| [cb] | <code>function</code> |  |
+
+<a name="module_analytics-latency-config-service--AnalyticsLatencyConfigService+getTableLatency"></a>
+
+#### analyticsLatencyConfigService.getTableLatency(request, [options], [cb]) ⇒ <code>Promise</code>
+**Kind**: instance method of [<code>AnalyticsLatencyConfigService</code>](#exp_module_analytics-latency-config-service--AnalyticsLatencyConfigService)  
+**Fulfill**: <code>Object</code>  
+**Reject**: [<code>BadRequest</code>](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors.BadRequest)  
+**Reject**: [<code>NotFound</code>](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors.NotFound)  
+**Reject**: [<code>InternalError</code>](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors.InternalError)  
+**Reject**: <code>Error</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| request |  |  |
 | [options] | <code>object</code> |  |
 | [options.timeout] | <code>number</code> | A request specific timeout |
 | [options.span] | [<code>Span</code>](https://doc.esdoc.org/github.com/opentracing/opentracing-javascript/class/src/span.js~Span.html) | An OpenTracing span - For example from the parent request |
@@ -124,6 +145,7 @@ Errors returned by methods.
 * [.Errors](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors)
     * [.BadRequest](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors.BadRequest) ⇐ <code>Error</code>
     * [.InternalError](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors.InternalError) ⇐ <code>Error</code>
+    * [.NotFound](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors.NotFound) ⇐ <code>Error</code>
 
 <a name="module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors.BadRequest"></a>
 
@@ -143,6 +165,20 @@ BadRequest
 
 ##### Errors.InternalError ⇐ <code>Error</code>
 InternalError
+
+**Kind**: static class of [<code>Errors</code>](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors)  
+**Extends**: <code>Error</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| code |  | 
+| message | <code>string</code> | 
+
+<a name="module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors.NotFound"></a>
+
+##### Errors.NotFound ⇐ <code>Error</code>
+NotFound
 
 **Kind**: static class of [<code>Errors</code>](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.Errors)  
 **Extends**: <code>Error</code>  

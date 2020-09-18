@@ -4,7 +4,7 @@ info:
   description: Service for surfacing latency config settings for the analytics pipeline.
   # when changing the version here, make sure to run
   # `make generate` to generate clients and server
-  version: 0.1.1
+  version: 0.1.2
   x-npm-package: '@clever/analytics-latency-config-service'
 schemes:
   - http
@@ -32,6 +32,33 @@ paths:
         200:
           description: OK response
 
+  /latency:
+    get:
+      summary: Get Latency and Thresholds for a particular table.
+               Note that we only do a fast-check for latency, via the latency info table.
+               This may be slightly inaccurate, or missing, in the case of some schemas (e.g. firehose events).
+               If no latency information is available, returns the thresholds and an unset latency.
+               If the table is blacklisted, or the schema does not exist, returns an a not found error.
+               Does not (currently) check the schema metadata to see if the table actually exists - just default to the config values.
+      operationId: getTableLatency
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/GetTableLatencyRequest"
+      responses:
+        200:
+          description: Latency and Thresholds for the table
+          schema:
+            $ref: "#/definitions/GetTableLatencyResponse"
+        400:
+          $ref: "#/responses/BadRequest"
+        404:
+          $ref: "#/responses/NotFound"
+        500:
+          $ref: "#/responses/InternalError"
+
   /legacy_config:
     get:
       summary: Get Latency Configs for all Databases/Schemas
@@ -47,6 +74,44 @@ paths:
 
 
 definitions:
+  GetTableLatencyRequest:
+    type: object
+    required:
+     - database
+     - schema
+     - table
+    properties:
+      table:
+        type: string
+      schema:
+        type: string
+      database:
+        $ref: "#/definitions/AnalyticsDatabase"
+
+  GetTableLatencyResponse:
+    type: object
+    required:
+     - database
+     - schema
+     - table
+     - thresholds
+     - owner
+    properties:
+      table:
+        type: string
+      schema:
+        type: string
+      database:
+        $ref: "#/definitions/AnalyticsDatabase"
+      owner:
+        type: string
+      thresholds:
+        $ref: "#/definitions/Thresholds"
+      latency:
+        description: Table latency in hours
+        x-nullable: true
+        type: number
+
   ThresholdTier:
     type: string
     description: Threshold Tiers
@@ -76,7 +141,6 @@ definitions:
       timestampColumn:
         type: string
       thresholds:
-        x-nullable: false
         $ref: "#/definitions/Thresholds"
 
   TableCheck:

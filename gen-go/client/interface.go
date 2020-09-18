@@ -19,6 +19,15 @@ type Client interface {
 	// default: client side HTTP errors, for example: context.DeadlineExceeded.
 	HealthCheck(ctx context.Context) error
 
+	// GetTableLatency makes a GET request to /latency
+	//
+	// 200: *models.GetTableLatencyResponse
+	// 400: *models.BadRequest
+	// 404: *models.NotFound
+	// 500: *models.InternalError
+	// default: client side HTTP errors, for example: context.DeadlineExceeded.
+	GetTableLatency(ctx context.Context, i *models.GetTableLatencyRequest) (*models.GetTableLatencyResponse, error)
+
 	// GetAllLegacyConfigs makes a GET request to /legacy_config
 	//
 	// 200: *models.AnalyticsLatencyConfigs
