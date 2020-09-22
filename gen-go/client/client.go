@@ -23,7 +23,7 @@ var _ = strconv.FormatInt
 var _ = bytes.Compare
 
 // Version of the client.
-const Version = "0.1.2"
+const Version = "0.2.0"
 
 // VersionHeader is sent with every request.
 const VersionHeader = "X-Client-Version"

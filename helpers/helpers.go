@@ -7,7 +7,10 @@ import (
 	"github.com/Clever/analytics-latency-config-service/gen-go/models"
 )
 
-const NoLatencyAlert = "none"
+const (
+	// NoLatencyAlert is a constant to define the string used when there's no latency alert configured for a given threshold
+	NoLatencyAlert = "none"
+)
 
 // CombineThresholdsWithDefaults takes some threshold overrides, and fills in default values if not specified
 func CombineThresholdsWithDefaults(overrides *models.Thresholds, defaults models.Thresholds) models.Thresholds {
@@ -23,6 +26,9 @@ func CombineThresholdsWithDefaults(overrides *models.Thresholds, defaults models
 	}
 	if overrides.Minor == "" {
 		overrides.Minor = defaults.Minor
+	}
+	if overrides.Refresh == "" {
+		overrides.Refresh = defaults.Refresh
 	}
 
 	return *overrides
@@ -40,6 +46,8 @@ func GetThresholdTierValue(thresholds *models.Thresholds, tier models.ThresholdT
 		return thresholds.Major, nil
 	case models.ThresholdTierMinor:
 		return thresholds.Minor, nil
+	case models.ThresholdTierRefresh:
+		return thresholds.Refresh, nil
 	case models.ThresholdTierNone:
 		fallthrough // there's no field for none on the thresholds object
 	default:
@@ -56,6 +64,8 @@ func GetThresholdTierErrorValue(tier models.ThresholdTier) (int, error) {
 		return 2, nil
 	case models.ThresholdTierMinor:
 		return 1, nil
+	case models.ThresholdTierRefresh:
+		fallthrough // Refreshes tier isn't an error
 	case models.ThresholdTierNone:
 		return 0, nil
 	default:

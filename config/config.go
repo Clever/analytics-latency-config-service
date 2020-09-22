@@ -8,13 +8,9 @@ import (
 	"path"
 
 	"github.com/Clever/analytics-latency-config-service/gen-go/models"
+	"github.com/Clever/analytics-latency-config-service/helpers"
 
 	"github.com/kardianos/osext"
-)
-
-const (
-	// NoLatencyAlert is a constant to define the string used when there's no latency alert configured for a given threshold
-	NoLatencyAlert = "none"
 )
 
 var (
@@ -66,6 +62,7 @@ func init() {
 		Critical: globalDefaultLatency,
 		Major:    globalDefaultLatency,
 		Minor:    globalDefaultLatency,
+		Refresh:  helpers.NoLatencyAlert,
 	}
 
 	dir, err := osext.ExecutableFolder()
