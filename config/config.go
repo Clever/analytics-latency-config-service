@@ -2,15 +2,11 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"os"
-	"path"
 
 	"github.com/Clever/analytics-latency-config-service/gen-go/models"
 	"github.com/Clever/analytics-latency-config-service/helpers"
-
-	"github.com/kardianos/osext"
 )
 
 var (
@@ -52,7 +48,7 @@ var (
 	globalDefaultLatency    string
 	GlobalDefaultThresholds models.Thresholds
 
-	latencyConfigPath string
+	latencyConfig string
 )
 
 func init() {
@@ -64,12 +60,6 @@ func init() {
 		Minor:    globalDefaultLatency,
 		Refresh:  helpers.NoLatencyAlert,
 	}
-
-	dir, err := osext.ExecutableFolder()
-	if err != nil {
-		log.Fatal(err)
-	}
-	latencyConfigPath = path.Join(dir, "config/latency_config.json")
 }
 
 // Init reads environment variables and initializes the config.
@@ -97,22 +87,28 @@ func Init() {
 	RDSExternalDatabase = requiredEnv("RDS_EXTERNAL_DATABASE")
 	RDSExternalUsername = requiredEnv("RDS_EXTERNAL_USER")
 	RDSExternalPassword = requiredEnv("RDS_EXTERNAL_PASSWORD")
+
+	latencyConfig = requiredEnv("LATENCY_CONFIG")
 }
 
 // ParseChecks reads in the latency check definitions
 func ParseChecks() models.AnalyticsLatencyConfigs {
-	latencyJSON, err := ioutil.ReadFile(latencyConfigPath)
-	if err != nil {
-		log.Fatalf("read-latency-config-error: %s", err.Error())
+	if latencyConfig == "" {
+		log.Fatalf("empty latency config")
 		panic("Unable to read latency config")
 	}
 
 	var checks models.AnalyticsLatencyConfigs
-	err = json.Unmarshal(latencyJSON, &checks)
+	err := json.Unmarshal([]byte(latencyConfig), &checks)
 	if err != nil {
 		log.Fatalf("parse-latency-checks-error: %s", err.Error())
 		panic("Unable to parse latency checks")
 	}
+
+	// Now that latency-config is an environment variable, we'll do validation
+	// at startup. This way, if there's something wrong with the config, the service
+	// will fail fast (and rollback) rather than have strange, intermittent errors.
+	validateLatencyConfig(checks)
 
 	return checks
 }

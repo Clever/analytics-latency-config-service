@@ -21,6 +21,7 @@ env:
 - RDS_EXTERNAL_PASSWORD
 - RDS_EXTERNAL_HOST
 - RDS_EXTERNAL_PORT
+- LATENCY_CONFIG
 resources:
   cpu: 0.1
   soft_mem_limit: 0.1

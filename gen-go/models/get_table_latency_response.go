@@ -21,7 +21,7 @@ type GetTableLatencyResponse struct {
 	// Required: true
 	Database AnalyticsDatabase `json:"database"`
 
-	// Table latencty in hours
+	// Table latency in hours
 	Latency *float64 `json:"latency,omitempty"`
 
 	// owner

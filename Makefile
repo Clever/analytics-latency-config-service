@@ -31,8 +31,6 @@ db-setup:
 
 build: generate
 	$(call golang-build,$(PKG),$(EXECUTABLE))
-	mkdir -p bin/config
-	cp config/latency_config.json bin/config/latency_config.json
 
 run: build
 	bin/$(EXECUTABLE)
