@@ -105,6 +105,11 @@ func ParseChecks() models.AnalyticsLatencyConfigs {
 		panic("Unable to parse latency checks")
 	}
 
+	// Now that latency-config is an environment variable, we'll do validation
+	// at startup. This way, if there's something wrong with the config, the service
+	// will fail fast (and rollback) rather than have strange, intermittent errors.
+	validateLatencyConfig(checks)
+
 	return checks
 }
 
