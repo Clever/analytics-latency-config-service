@@ -1,0 +1,247 @@
+swagger: '2.0'
+info:
+  title: analytics-latency-config-service
+  description: Service for surfacing latency config settings for the analytics pipeline.
+  # when changing the version here, make sure to run
+  # `make generate` to generate clients and server
+  version: 0.2.1
+  x-npm-package: '@clever/analytics-latency-config-service'
+schemes:
+  - http
+produces:
+  - application/json
+responses:
+  BadRequest:
+    description: "Bad Request"
+    schema:
+      $ref: "#/definitions/BadRequest"
+  InternalError:
+    description: "Internal Error"
+    schema:
+      $ref: "#/definitions/InternalError"
+  NotFound:
+    description: Entity Not Found
+    schema:
+      $ref: "#/definitions/NotFound"
+paths:
+  /_health:
+    get:
+      operationId: healthCheck
+      description: Checks if the service is healthy
+      responses:
+        200:
+          description: OK response
+
+  /latency:
+    get:
+      summary: Get Latency and Thresholds for a particular table.
+               Note that we only do a fast-check for latency, via the latency info table.
+               This may be slightly inaccurate, or missing, in the case of some schemas (e.g. firehose events).
+               If no latency information is available, returns the thresholds and an unset latency.
+               If the table is blacklisted, or the schema does not exist, returns an a not found error.
+               Does not (currently) check the schema metadata to see if the table actually exists - just default to the config values.
+      operationId: getTableLatency
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/GetTableLatencyRequest"
+      responses:
+        200:
+          description: Latency and Thresholds for the table
+          schema:
+            $ref: "#/definitions/GetTableLatencyResponse"
+        400:
+          $ref: "#/responses/BadRequest"
+        404:
+          $ref: "#/responses/NotFound"
+        500:
+          $ref: "#/responses/InternalError"
+
+  /legacy_config:
+    get:
+      summary: Get Latency Configs for all Databases/Schemas
+               This is primarily for legacy compatibility with APM. For anything else, we should
+               consider adding new endpoints
+      operationId: getAllLegacyConfigs
+      parameters: []
+      responses:
+        200:
+          description: Configs for all databases + schemas
+          schema:
+            $ref: "#/definitions/AnalyticsLatencyConfigs"
+
+
+definitions:
+  GetTableLatencyRequest:
+    type: object
+    required:
+     - database
+     - schema
+     - table
+    properties:
+      table:
+        type: string
+      schema:
+        type: string
+      database:
+        $ref: "#/definitions/AnalyticsDatabase"
+
+  GetTableLatencyResponse:
+    type: object
+    required:
+     - database
+     - schema
+     - table
+     - thresholds
+     - owner
+    properties:
+      table:
+        type: string
+      schema:
+        type: string
+      database:
+        $ref: "#/definitions/AnalyticsDatabase"
+      owner:
+        type: string
+      thresholds:
+        $ref: "#/definitions/Thresholds"
+      latency:
+        description: Table latency in hours
+        x-nullable: true
+        type: number
+
+  ThresholdTier:
+    type: string
+    description: Threshold Tiers
+    enum:
+      - "Critical"
+      - "Major"
+      - "Minor"
+      - "Refresh"
+      - "None"
+
+  Thresholds:
+    type: object
+    description: Thresholds holds values for all of the different thresholds we might want to check against.
+                 Null values are not overridden, empty values are "unset", to not alert at that level.
+                 Otherwise, each `threshold` expects a string formatted Golang duration
+    properties:
+      critical:
+        type: string
+      major:
+        type: string
+      minor:
+        type: string
+      refresh:
+        type: string
+
+  LatencySpec:
+    type: object
+    description: LatencySpec stores information for a latency check
+    properties:
+      timestampColumn:
+        type: string
+      thresholds:
+        $ref: "#/definitions/Thresholds"
+
+  TableCheck:
+      description: TableCheck configures a single latency check for a table
+      properties:
+        tableName:
+          type: string
+        tableOwner:
+          type: string
+          description: SchemaOwner associates an owner for a given schema. It can be overridden at the table level. It defaults to eng-deip
+        latencySpec:
+          $ref: "#/definitions/LatencySpec"
+
+  SchemaConfig:
+    type: object
+    description: SchemaConfig configures latency checks by schema
+    properties:
+      schemaName:
+        type: string
+      schemaOwner:
+        type: string
+        description: SchemaOwner associates an owner for a given schema. It can be overridden at the table level. It defaults to eng-deip
+      defaultThresholds:
+        $ref: "#/definitions/Thresholds"
+      defaultTimestampColumn:
+        type: string
+      blacklist:
+        type: array
+        items:
+          type: string
+      whitelist:
+        type: array
+        items:
+          type: string
+      tableOverrides:
+        type: array
+        items:
+          $ref: "#/definitions/TableCheck"
+
+  AnalyticsLatencyConfigs:
+    required:
+      - redshiftProd
+      - redshiftFast
+      - rdsInternal
+      - rdsExternal
+    properties:
+      redshiftProd:
+        type: array
+        items:
+          $ref: "#/definitions/SchemaConfig"
+      redshiftFast:
+        type: array
+        items:
+          $ref: "#/definitions/SchemaConfig"
+      rdsInternal:
+        type: array
+        items:
+          $ref: "#/definitions/SchemaConfig"
+      rdsExternal:
+        type: array
+        items:
+          $ref: "#/definitions/SchemaConfig"
+
+  AnalyticsDatabase:
+    type: string
+    description: Analytics databases, in config
+    enum:
+      - "RedshiftProd"
+      - "RedshiftFast"
+      - "RdsInternal"
+      - "RdsExternal"
+
+  ErrorCode:
+    type: string
+    enum:
+      - InvalidID
+      # place more error codes that clients can identify and act upon
+
+  InternalError:
+    type: object
+    properties:
+      message:
+        type: string
+      code:
+        $ref: "#/definitions/ErrorCode"
+
+  BadRequest:
+    type: object
+    properties:
+      message:
+        type: string
+      code:
+        $ref: "#/definitions/ErrorCode"
+
+  NotFound:
+    type: object
+    properties:
+      message:
+        type: string
+      code:
+        $ref: "#/definitions/ErrorCode"
