@@ -1,9 +1,10 @@
 package config
 
 import (
-	"encoding/json"
 	"log"
 	"os"
+
+	"github.com/ghodss/yaml"
 
 	"github.com/Clever/analytics-latency-config-service/gen-go/models"
 	"github.com/Clever/analytics-latency-config-service/helpers"
@@ -99,7 +100,7 @@ func ParseChecks() models.AnalyticsLatencyConfigs {
 	}
 
 	var checks models.AnalyticsLatencyConfigs
-	err := json.Unmarshal([]byte(latencyConfig), &checks)
+	err := yaml.Unmarshal([]byte(latencyConfig), &checks)
 	if err != nil {
 		log.Fatalf("parse-latency-checks-error: %s", err.Error())
 		panic("Unable to parse latency checks")
