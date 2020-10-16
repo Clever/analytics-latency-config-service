@@ -63,8 +63,13 @@ func init() {
 	}
 }
 
-// Init reads environment variables and initializes the config.
 func Init() {
+	InitDBs()
+	InitConfig()
+}
+
+// InitDBs reads environment DB variables and initializes the config.
+func InitDBs() {
 	RedshiftProdHost = requiredEnv("REDSHIFT_PROD_HOST")
 	RedshiftProdPort = requiredEnv("REDSHIFT_PROD_PORT")
 	RedshiftProdDatabase = requiredEnv("REDSHIFT_PROD_DATABASE")
@@ -88,7 +93,11 @@ func Init() {
 	RDSExternalDatabase = requiredEnv("RDS_EXTERNAL_DATABASE")
 	RDSExternalUsername = requiredEnv("RDS_EXTERNAL_USER")
 	RDSExternalPassword = requiredEnv("RDS_EXTERNAL_PASSWORD")
+}
 
+// InitConfig reads environment latency config variables and initializes the config.
+// We separate this from the dbs so that we can call it separately.
+func InitConfig() {
 	latencyConfig = requiredEnv("LATENCY_CONFIG")
 }
 
