@@ -53,7 +53,7 @@ func New() (*Controller, error) {
 		mErrors = multierror.Append(mErrors, fmt.Errorf("rds-internal-failed-init: %s", err.Error()))
 	}
 
-	rdsExternalConnection, err := db.NewRDSInternalClient()
+	rdsExternalConnection, err := db.NewRDSExternalClient()
 	if err != nil {
 		mErrors = multierror.Append(mErrors, fmt.Errorf("rds-external-failed-init: %s", err.Error()))
 	}
