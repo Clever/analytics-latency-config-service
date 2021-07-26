@@ -23,7 +23,7 @@ var _ = strconv.FormatInt
 var _ = bytes.Compare
 
 // Version of the client.
-const Version = "0.2.2"
+const Version = "0.2.3"
 
 // VersionHeader is sent with every request.
 const VersionHeader = "X-Client-Version"
@@ -33,7 +33,6 @@ type WagClient struct {
 	basePath    string
 	requestDoer doer
 	client      *http.Client
-	timeout     time.Duration
 	// Keep the retry doer around so that we can set the number of retries
 	retryDoer *retryDoer
 	// Keep the circuit doer around so that we can turn it on / off
@@ -54,7 +53,8 @@ func New(basePath string) *WagClient {
 	retry := retryDoer{d: tracing, retryPolicy: SingleRetryPolicy{}}
 	logger := logger.New("analytics-latency-config-service-wagclient")
 	circuit := &circuitBreakerDoer{
-		d:     &retry,
+		d: &retry,
+		// TODO: INFRANG-4404 allow passing circuitBreakerOptions
 		debug: true,
 		// one circuit for each service + url pair
 		circuitName: fmt.Sprintf("analytics-latency-config-service-%s", shortHash(basePath)),
@@ -142,8 +142,8 @@ func (c *WagClient) SetCircuitBreakerSettings(settings CircuitBreakerSettings) {
 	})
 }
 
-// SetTimeout sets a timeout on all operations for the client. To make a single request
-// with a timeout use context.WithTimeout as described here: https://godoc.org/golang.org/x/net/context#WithTimeout.
+// SetTimeout sets a timeout on all operations for the client. To make a single request with a shorter timeout
+// than the default on the client, use context.WithTimeout as described here: https://godoc.org/golang.org/x/net/context#WithTimeout.
 func (c *WagClient) SetTimeout(timeout time.Duration) {
 	c.defaultTimeout = timeout
 }
@@ -240,7 +240,7 @@ func (c *WagClient) doHealthCheckRequest(ctx context.Context, req *http.Request,
 		return &output
 
 	default:
-		return &models.InternalError{Message: "Unknown response"}
+		return &models.InternalError{Message: fmt.Sprintf("Unknown status code %v", resp.StatusCode)}
 	}
 }
 
@@ -356,7 +356,7 @@ func (c *WagClient) doGetTableLatencyRequest(ctx context.Context, req *http.Requ
 		return nil, &output
 
 	default:
-		return nil, &models.InternalError{Message: "Unknown response"}
+		return nil, &models.InternalError{Message: fmt.Sprintf("Unknown status code %v", resp.StatusCode)}
 	}
 }
 
@@ -452,7 +452,7 @@ func (c *WagClient) doGetAllLegacyConfigsRequest(ctx context.Context, req *http.
 		return nil, &output
 
 	default:
-		return nil, &models.InternalError{Message: "Unknown response"}
+		return nil, &models.InternalError{Message: fmt.Sprintf("Unknown status code %v", resp.StatusCode)}
 	}
 }
 

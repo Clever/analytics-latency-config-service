@@ -6,9 +6,10 @@ export PATH := $(PWD)/bin:$(PATH)
 APP_NAME ?= analytics-latency-config-service
 EXECUTABLE = $(APP_NAME)
 PKG = github.com/Clever/$(APP_NAME)
-PKGS := $(shell go list ./... | grep -v /vendor | grep -v /gen-go | grep -v /tools)
+PKGS := $(shell go list ./... | grep -v /vendor | grep -v /gen-go | grep -v /tools | grep -v /tools)
 
-WAG_VERSION := latest
+# Temporarily pin to wag 6.4.5 until after migrated to go mod and Go 1.16
+WAG_VERSION := v6.4.5
 
 $(eval $(call golang-version-check,1.13))
 
@@ -36,10 +37,10 @@ run: build
 	bin/$(EXECUTABLE)
 
 generate: wag-generate-deps
-	$(call wag-generate,./swagger.yml,$(PKG))
+	$(call wag-generate-mod,./swagger.yml)
 	go generate ./...
 
-install_deps: golang-dep-vendor-deps
-	$(call golang-dep-vendor)
+install_deps:
+	go mod vendor
 	go build -o bin/mockgen    ./vendor/github.com/golang/mock/mockgen
-	go build -o bin/go-bindata ./vendor/github.com/jteeuwen/go-bindata/go-bindata
+	go build -o bin/go-bindata ./vendor/github.com/kevinburke/go-bindata/go-bindata
