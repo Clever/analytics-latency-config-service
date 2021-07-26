@@ -38,7 +38,6 @@ run: build
 
 generate: wag-generate-deps
 	$(call wag-generate-mod,./swagger.yml)
-	go generate ./...
 
 install_deps:
 	go mod vendor
