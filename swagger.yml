@@ -189,6 +189,7 @@ definitions:
       - redshiftFast
       - rdsInternal
       - rdsExternal
+      - snowflake
     properties:
       redshiftProd:
         type: array
@@ -206,6 +207,10 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/SchemaConfig"
+      snowflake:
+        type: array
+        items:
+          $ref: "#/definitions/SchemaConfig"
 
   AnalyticsDatabase:
     type: string
@@ -215,6 +220,7 @@ definitions:
       - "RedshiftFast"
       - "RdsInternal"
       - "RdsExternal"
+      - "Snowflake"
 
   ErrorCode:
     type: string
