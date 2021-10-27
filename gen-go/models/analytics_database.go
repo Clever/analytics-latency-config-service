@@ -27,6 +27,8 @@ const (
 	AnalyticsDatabaseRdsInternal AnalyticsDatabase = "RdsInternal"
 	// AnalyticsDatabaseRdsExternal captures enum value "RdsExternal"
 	AnalyticsDatabaseRdsExternal AnalyticsDatabase = "RdsExternal"
+	// AnalyticsDatabaseSnowflake captures enum value "Snowflake"
+	AnalyticsDatabaseSnowflake AnalyticsDatabase = "Snowflake"
 )
 
 // for schema
@@ -34,7 +36,7 @@ var analyticsDatabaseEnum []interface{}
 
 func init() {
 	var res []AnalyticsDatabase
-	if err := json.Unmarshal([]byte(`["RedshiftProd","RedshiftFast","RdsInternal","RdsExternal"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["RedshiftProd","RedshiftFast","RdsInternal","RdsExternal","Snowflake"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
