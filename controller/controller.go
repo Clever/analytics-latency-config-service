@@ -14,14 +14,14 @@ import (
 
 // Controller implements server.Controller
 type Controller struct {
-	redshiftProdConnection db.PostgresClient
-	redshiftFastConnection db.PostgresClient
-	rdsExternalConnection  db.PostgresClient
-	rdsInternalConnection  db.PostgresClient
+	redshiftProdConnection db.DBClient
+	redshiftFastConnection db.DBClient
+	rdsExternalConnection  db.DBClient
+	rdsInternalConnection  db.DBClient
 	configChecks           models.AnalyticsLatencyConfigs
 }
 
-func (c *Controller) getDatabaseConnection(database models.AnalyticsDatabase) (db.PostgresClient, error) {
+func (c *Controller) getDatabaseConnection(database models.AnalyticsDatabase) (db.DBClient, error) {
 	switch database {
 	case models.AnalyticsDatabaseRedshiftProd:
 		return c.redshiftProdConnection, nil
