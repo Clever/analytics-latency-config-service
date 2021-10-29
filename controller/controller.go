@@ -18,6 +18,7 @@ type Controller struct {
 	redshiftFastConnection db.DBClient
 	rdsExternalConnection  db.DBClient
 	rdsInternalConnection  db.DBClient
+	snowflakeConnection    db.DBClient
 	configChecks           models.AnalyticsLatencyConfigs
 }
 
@@ -31,6 +32,8 @@ func (c *Controller) getDatabaseConnection(database models.AnalyticsDatabase) (d
 		return c.rdsInternalConnection, nil
 	case models.AnalyticsDatabaseRdsExternal:
 		return c.rdsExternalConnection, nil
+	case models.AnalyticsDatabaseSnowflake:
+		return c.snowflakeConnection, nil
 	default:
 		return nil, fmt.Errorf("unexpected database")
 	}
@@ -58,6 +61,11 @@ func New() (*Controller, error) {
 		mErrors = multierror.Append(mErrors, fmt.Errorf("rds-external-failed-init: %s", err.Error()))
 	}
 
+	snowflakeConnection, err := db.NewSnowflakeProdClient()
+	if err != nil {
+		mErrors = multierror.Append(mErrors, fmt.Errorf("snowflake-failed-init: %s", err.Error()))
+	}
+
 	configChecks := config.ParseChecks()
 
 	if v := mErrors.ErrorOrNil(); v != nil {
@@ -69,6 +77,7 @@ func New() (*Controller, error) {
 		redshiftFastConnection: redshiftFastConnection,
 		rdsExternalConnection:  rdsExternalConnection,
 		rdsInternalConnection:  rdsInternalConnection,
+		snowflakeConnection:    snowflakeConnection,
 		configChecks:           configChecks,
 	}, nil
 }
