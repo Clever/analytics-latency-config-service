@@ -14,6 +14,7 @@ func validateLatencyConfig(configs models.AnalyticsLatencyConfigs) {
 		models.AnalyticsDatabaseRedshiftFast,
 		models.AnalyticsDatabaseRdsInternal,
 		models.AnalyticsDatabaseRdsExternal,
+		models.AnalyticsDatabaseSnowflake,
 	}
 
 	for _, db := range dbs {
