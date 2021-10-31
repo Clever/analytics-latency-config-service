@@ -1,6 +1,6 @@
 module github.com/Clever/analytics-latency-config-service
 
-go 1.13
+go 1.16
 
 require (
 	github.com/Clever/discovery-go v1.7.2
