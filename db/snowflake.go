@@ -27,7 +27,7 @@ type SnowflakeCredentials struct {
 	Authenticator string
 }
 
-// NewPostgresClient creates a Postgres db client.
+// NewSnowflakeClient creates a Snowflake db client.
 func NewSnowflakeClient(info SnowflakeCredentials) (*Snowflake, error) {
 	connectionParams := fmt.Sprintf("%s:%s@%s/%s?role=%s&warehouse=%s",
 		info.Username, info.Password, info.Account, info.Database, info.Role, info.Warehouse)
@@ -98,12 +98,12 @@ func (c *Snowflake) QueryLatencyTable(schemaName, tableName string) (int64, bool
 // belonging to a given schema in Postgres, indexed
 // by table name.
 // It also attempts to infer the timestamp column, by
-// choosing the alphabetically lowest column with a
+// choosing the alphabetically highest column with a
 // timestamp type. We use this as a heuristic since a
 // lot of our timestamp columns are prefixed with "_".
 func (c *Snowflake) QueryTableMetadata(schemaName string) (map[string]TableMetadata, error) {
 	query := fmt.Sprintf(`
-		SELECT table_name, min("column_name")
+		SELECT table_name, max("column_name")
 		FROM information_schema.columns
 		WHERE table_schema ILIKE '%s'
 		AND data_type ILIKE '%%timestamp%%'
