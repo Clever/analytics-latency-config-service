@@ -45,6 +45,15 @@ var (
 	RDSExternalUsername string
 	RDSExternalPassword string
 
+	// We have one Snowflake instance
+	SnowflakeUsername      string
+	SnowflakePassword      string
+	SnowflakeAccount       string
+	SnowflakeDatabase      string
+	SnowflakeWarehouse     string
+	SnowflakeRole          string
+	SnowflakeAuthenticator string
+
 	DefaultOwner            string
 	globalDefaultLatency    string
 	GlobalDefaultThresholds models.Thresholds
@@ -93,6 +102,14 @@ func InitDBs() {
 	RDSExternalDatabase = requiredEnv("RDS_EXTERNAL_DATABASE")
 	RDSExternalUsername = requiredEnv("RDS_EXTERNAL_USER")
 	RDSExternalPassword = requiredEnv("RDS_EXTERNAL_PASSWORD")
+
+	SnowflakeUsername = requiredEnv("SNOWFLAKE_USER")
+	SnowflakePassword = requiredEnv("SNOWFLAKE_PASSWORD")
+	SnowflakeAccount = requiredEnv("SNOWFLAKE_ACCOUNT")
+	SnowflakeDatabase = requiredEnv("SNOWFLAKE_DATABASE")
+	SnowflakeWarehouse = requiredEnv("SNOWFLAKE_WAREHOUSE")
+	SnowflakeRole = requiredEnv("SNOWFLAKE_ROLE")
+	SnowflakeAuthenticator = os.Getenv("SNOWFLAKE_AUTHENTICATOR") // for local development
 }
 
 // InitConfig reads environment latency config variables and initializes the config.

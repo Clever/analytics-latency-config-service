@@ -11,7 +11,7 @@ PKGS := $(shell go list ./... | grep -v /vendor | grep -v /gen-go | grep -v /too
 # Temporarily pin to wag 6.4.5 until after migrated to go mod and Go 1.16
 WAG_VERSION := v6.4.5
 
-$(eval $(call golang-version-check,1.13))
+$(eval $(call golang-version-check,1.16))
 
 export POSTGRES_USER?=postgres
 export POSTGRES_HOST?=localhost
@@ -41,5 +41,5 @@ generate: wag-generate-deps
 
 install_deps:
 	go mod vendor
-	go build -o bin/mockgen    ./vendor/github.com/golang/mock/mockgen
-	go build -o bin/go-bindata ./vendor/github.com/kevinburke/go-bindata/go-bindata
+	go build -o bin/mockgen -mod=vendor github.com/golang/mock/mockgen
+	go build -o bin/go-bindata -mod=vendor github.com/kevinburke/go-bindata/go-bindata

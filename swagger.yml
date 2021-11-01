@@ -4,7 +4,7 @@ info:
   description: Service for surfacing latency config settings for the analytics pipeline.
   # when changing the version here, make sure to run
   # `make generate` to generate clients and server
-  version: 0.2.3
+  version: 0.3.0
   x-npm-package: '@clever/analytics-latency-config-service'
 schemes:
   - http
@@ -189,6 +189,7 @@ definitions:
       - redshiftFast
       - rdsInternal
       - rdsExternal
+      - snowflake
     properties:
       redshiftProd:
         type: array
@@ -206,6 +207,10 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/SchemaConfig"
+      snowflake:
+        type: array
+        items:
+          $ref: "#/definitions/SchemaConfig"
 
   AnalyticsDatabase:
     type: string
@@ -215,6 +220,7 @@ definitions:
       - "RedshiftFast"
       - "RdsInternal"
       - "RdsExternal"
+      - "Snowflake"
 
   ErrorCode:
     type: string

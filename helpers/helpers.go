@@ -84,6 +84,8 @@ func GetDatabaseConfig(configs models.AnalyticsLatencyConfigs, database models.A
 		return configs.RdsInternal, nil
 	case models.AnalyticsDatabaseRdsExternal:
 		return configs.RdsExternal, nil
+	case models.AnalyticsDatabaseSnowflake:
+		return configs.Snowflake, nil
 	default:
 		return nil, fmt.Errorf("unexpected database config: %s", database)
 	}

@@ -1,6 +1,6 @@
 module github.com/Clever/analytics-latency-config-service
 
-go 1.13
+go 1.16
 
 require (
 	github.com/Clever/discovery-go v1.7.2
@@ -20,7 +20,6 @@ require (
 	github.com/go-openapi/swag v0.19.9
 	github.com/go-openapi/validate v0.19.10
 	github.com/golang/mock v1.6.0
-	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/go-multierror v1.1.0
@@ -30,14 +29,15 @@ require (
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
-	github.com/stretchr/testify v1.6.1
+	github.com/snowflakedb/gosnowflake v1.6.3
+	github.com/stretchr/testify v1.7.0
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/jaeger-lib v2.2.0+incompatible // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonschema v1.2.1-0.20200424115421-065759f9c3d7 // indirect
 	go.mongodb.org/mongo-driver v1.4.1 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
-	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
+	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 	gopkg.in/Clever/kayvee-go.v6 v6.24.0
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect

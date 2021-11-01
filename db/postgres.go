@@ -13,18 +13,11 @@ import (
 	_ "github.com/Clever/pq"
 )
 
-// PostgresClient provides a default implementation of PostgresClient
+// Postgres provides an implementation of DBClient
 // that contains the postgres client connection.
 type Postgres struct {
 	session     *sql.DB
 	clusterName string
-}
-
-type PostgresClient interface {
-	GetClusterName() string
-	GetSession() *sql.DB
-	QueryTableMetadata(schemaName string) (map[string]TableMetadata, error)
-	QueryLatencyTable(schemaName, tableName string) (int64, bool, error)
 }
 
 // PostgresCredentials contains the postgres credentials/information.
@@ -142,12 +135,6 @@ func (c *Postgres) QueryLatencyTable(schemaName, tableName string) (int64, bool,
 
 	hourDiff := (time.Now().Unix() - int64(latency.Float64)) / 3600
 	return hourDiff, latency.Valid, nil
-}
-
-// TableMetadata contains information about a table in Postgres
-type TableMetadata struct {
-	TableName       string
-	TimestampColumn string
 }
 
 // QueryTableMetadata returns a map of tables
