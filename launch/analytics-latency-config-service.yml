@@ -85,4 +85,4 @@ alarms:
   parameters:
     threshold: 0.05
 pod_config:
-  group: us-west-1
+  group: us-west-2
