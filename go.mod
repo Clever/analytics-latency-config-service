@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/Clever/discovery-go v1.7.2
 	github.com/Clever/go-process-metrics v0.2.0
-	github.com/Clever/pq v0.0.0-20210406222402-741030d37ece
+	github.com/Clever/pq v0.2.0
 	github.com/Clever/wag v1.6.1
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/asaskevich/govalidator v0.0.0-20200817114649-df4adffc9d8c // indirect
