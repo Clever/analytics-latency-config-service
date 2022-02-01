@@ -20,8 +20,8 @@ github.com/Clever/discovery-go v1.7.2 h1:sK3PJCz7Q94fDUAncTi4FDUHqMHrAYefPe0x8ZN
 github.com/Clever/discovery-go v1.7.2/go.mod h1:WC3d6zZHgBarTh3TCktYLy5Bj1Auj5fH86TkP+La71o=
 github.com/Clever/go-process-metrics v0.2.0 h1:a4mHTNkH/cnw1MQHDwR8IlJ4MnBXuMY77SYsLeslAYw=
 github.com/Clever/go-process-metrics v0.2.0/go.mod h1:Aemel1It05GRZlIfbxbTLl0TwgFaaAALkqfyzuTDk7s=
-github.com/Clever/pq v0.0.0-20210406222402-741030d37ece h1:uaHR7nKXYylS0Ptb5aUbmh5T/T4HnwbqDNYqs9IB6QE=
-github.com/Clever/pq v0.0.0-20210406222402-741030d37ece/go.mod h1:y0iLP1oF7nbGzy78+hn8ZeqFP1OY3r1jotlyH2xxiBo=
+github.com/Clever/pq v0.2.0 h1:dE0BboWBPWuXNc3QYI08+4NLHEBvuWbSdaWo23oeAIs=
+github.com/Clever/pq v0.2.0/go.mod h1:y0iLP1oF7nbGzy78+hn8ZeqFP1OY3r1jotlyH2xxiBo=
 github.com/Clever/wag v1.6.1 h1:sDmqO+7glGYq2mmtfs+pmfPI63Wt2rSGJHQWYLTagns=
 github.com/Clever/wag v1.6.1/go.mod h1:TFvKIlyPvxgOGyn36PX9LYRKxjVjmL1Rm3MPzYb5NXU=
 github.com/PuerkitoBio/purell v1.1.0/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
