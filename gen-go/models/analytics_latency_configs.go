@@ -31,10 +31,6 @@ type AnalyticsLatencyConfigs struct {
 	// Required: true
 	RedshiftFast []*SchemaConfig `json:"redshiftFast"`
 
-	// redshift prod
-	// Required: true
-	RedshiftProd []*SchemaConfig `json:"redshiftProd"`
-
 	// snowflake
 	// Required: true
 	Snowflake []*SchemaConfig `json:"snowflake"`
@@ -55,11 +51,6 @@ func (m *AnalyticsLatencyConfigs) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRedshiftFast(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateRedshiftProd(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -146,33 +137,6 @@ func (m *AnalyticsLatencyConfigs) validateRedshiftFast(formats strfmt.Registry) 
 			if err := m.RedshiftFast[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("redshiftFast" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *AnalyticsLatencyConfigs) validateRedshiftProd(formats strfmt.Registry) error {
-
-	if err := validate.Required("redshiftProd", "body", m.RedshiftProd); err != nil {
-		return err
-	}
-
-	for i := 0; i < len(m.RedshiftProd); i++ {
-
-		if swag.IsZero(m.RedshiftProd[i]) { // not required
-			continue
-		}
-
-		if m.RedshiftProd[i] != nil {
-
-			if err := m.RedshiftProd[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("redshiftProd" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

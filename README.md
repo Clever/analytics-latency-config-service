@@ -46,7 +46,7 @@ Defining checks in analytics-latency-config-service can be accomplished by addin
   ]
 ```
 
-`analytics-latency-config-service` then reads from this config to surface latency info to other workers/services. `schema` + `table` identifies the table, and `latency.timestamp_column` identifies the time a row enters Redshift. `latency.thresholds` configures the different tiers of latency thresholds maximum amount of latency acceptable for the table's data in [Go time format](https://golang.org/pkg/time/#ParseDuration).
+`analytics-latency-config-service` then reads from this config to surface latency info to other workers/services. `schema` + `table` identifies the table, and `latency.timestamp_column` identifies the time a row enters the source database. `latency.thresholds` configures the different tiers of latency thresholds maximum amount of latency acceptable for the table's data in [Go time format](https://golang.org/pkg/time/#ParseDuration).
 
 For tables that are not explicitly declared in the config, `default_threshold` and `default_timestamp_column` will be used as substitutes for the above values.
 

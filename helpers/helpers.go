@@ -76,8 +76,6 @@ func GetThresholdTierErrorValue(tier models.ThresholdTier) (int, error) {
 // GetDatabaseConfig returns the database-specific config
 func GetDatabaseConfig(configs models.AnalyticsLatencyConfigs, database models.AnalyticsDatabase) ([]*models.SchemaConfig, error) {
 	switch database {
-	case models.AnalyticsDatabaseRedshiftProd:
-		return configs.RedshiftProd, nil
 	case models.AnalyticsDatabaseRedshiftFast:
 		return configs.RedshiftFast, nil
 	case models.AnalyticsDatabaseRdsInternal:

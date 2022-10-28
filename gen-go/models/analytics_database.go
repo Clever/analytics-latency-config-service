@@ -19,8 +19,6 @@ import (
 type AnalyticsDatabase string
 
 const (
-	// AnalyticsDatabaseRedshiftProd captures enum value "RedshiftProd"
-	AnalyticsDatabaseRedshiftProd AnalyticsDatabase = "RedshiftProd"
 	// AnalyticsDatabaseRedshiftFast captures enum value "RedshiftFast"
 	AnalyticsDatabaseRedshiftFast AnalyticsDatabase = "RedshiftFast"
 	// AnalyticsDatabaseRdsInternal captures enum value "RdsInternal"
@@ -36,7 +34,7 @@ var analyticsDatabaseEnum []interface{}
 
 func init() {
 	var res []AnalyticsDatabase
-	if err := json.Unmarshal([]byte(`["RedshiftProd","RedshiftFast","RdsInternal","RdsExternal","Snowflake"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["RedshiftFast","RdsInternal","RdsExternal","Snowflake"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

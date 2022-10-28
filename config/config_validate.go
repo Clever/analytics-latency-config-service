@@ -10,7 +10,6 @@ import (
 
 func validateLatencyConfig(configs models.AnalyticsLatencyConfigs) {
 	dbs := []models.AnalyticsDatabase{
-		models.AnalyticsDatabaseRedshiftProd,
 		models.AnalyticsDatabaseRedshiftFast,
 		models.AnalyticsDatabaseRdsInternal,
 		models.AnalyticsDatabaseRdsExternal,
