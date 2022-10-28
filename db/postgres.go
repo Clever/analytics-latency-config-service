@@ -51,19 +51,6 @@ func NewPostgresClient(info PostgresCredentials, clusterName string) (*Postgres,
 	return &Postgres{session, clusterName}, nil
 }
 
-// NewRedshiftProdClient initializes a client to fresh prod
-func NewRedshiftProdClient() (*Postgres, error) {
-	info := PostgresCredentials{
-		Host:     config.RedshiftProdHost,
-		Port:     config.RedshiftProdPort,
-		Username: config.RedshiftProdUsername,
-		Password: config.RedshiftProdPassword,
-		Database: config.RedshiftProdDatabase,
-	}
-
-	return NewPostgresClient(info, "redshift-prod")
-}
-
 // NewRedshiftFastClient initializes a client to fast prod
 func NewRedshiftFastClient() (*Postgres, error) {
 	info := PostgresCredentials{

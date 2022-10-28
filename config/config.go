@@ -11,17 +11,7 @@ import (
 )
 
 var (
-	// We have two redshift databases:
-	// One that holds all the data and views (prod)
-	// And one that holds timeline (fast-prod)
-	// RedshiftProd* are for the former
-	RedshiftProdHost     string
-	RedshiftProdPort     string
-	RedshiftProdDatabase string
-	RedshiftProdUsername string
-	RedshiftProdPassword string
-
-	// RedshiftFast* are for the latter
+	// RedshiftFast* holds timeline (fast-prod)
 	RedshiftFastHost     string
 	RedshiftFastPort     string
 	RedshiftFastDatabase string
@@ -79,12 +69,6 @@ func Init() {
 
 // InitDBs reads environment DB variables and initializes the config.
 func InitDBs() {
-	RedshiftProdHost = requiredEnv("REDSHIFT_PROD_HOST")
-	RedshiftProdPort = requiredEnv("REDSHIFT_PROD_PORT")
-	RedshiftProdDatabase = requiredEnv("REDSHIFT_PROD_DATABASE")
-	RedshiftProdUsername = requiredEnv("REDSHIFT_PROD_USER")
-	RedshiftProdPassword = requiredEnv("REDSHIFT_PROD_PASSWORD")
-
 	RedshiftFastHost = requiredEnv("REDSHIFT_FAST_HOST")
 	RedshiftFastPort = requiredEnv("REDSHIFT_FAST_PORT")
 	RedshiftFastDatabase = requiredEnv("REDSHIFT_FAST_DATABASE")

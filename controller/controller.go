@@ -14,7 +14,6 @@ import (
 
 // Controller implements server.Controller
 type Controller struct {
-	redshiftProdConnection db.DBClient
 	redshiftFastConnection db.DBClient
 	rdsExternalConnection  db.DBClient
 	rdsInternalConnection  db.DBClient
@@ -24,8 +23,6 @@ type Controller struct {
 
 func (c *Controller) getDatabaseConnection(database models.AnalyticsDatabase) (db.DBClient, error) {
 	switch database {
-	case models.AnalyticsDatabaseRedshiftProd:
-		return c.redshiftProdConnection, nil
 	case models.AnalyticsDatabaseRedshiftFast:
 		return c.redshiftFastConnection, nil
 	case models.AnalyticsDatabaseRdsInternal:
@@ -41,11 +38,6 @@ func (c *Controller) getDatabaseConnection(database models.AnalyticsDatabase) (d
 
 func New() (*Controller, error) {
 	var mErrors *multierror.Error
-	redshiftProdConnection, err := db.NewRedshiftProdClient()
-	if err != nil {
-		mErrors = multierror.Append(mErrors, fmt.Errorf("redshift-prod-failed-init: %s", err.Error()))
-	}
-
 	redshiftFastConnection, err := db.NewRedshiftFastClient()
 	if err != nil {
 		mErrors = multierror.Append(mErrors, fmt.Errorf("redshift-fast-failed-init: %s", err.Error()))
@@ -73,7 +65,6 @@ func New() (*Controller, error) {
 	}
 
 	return &Controller{
-		redshiftProdConnection: redshiftProdConnection,
 		redshiftFastConnection: redshiftFastConnection,
 		rdsExternalConnection:  rdsExternalConnection,
 		rdsInternalConnection:  rdsInternalConnection,
