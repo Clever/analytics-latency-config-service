@@ -10,14 +10,12 @@ import (
 	"strconv"
 
 	"github.com/Clever/analytics-latency-config-service/gen-go/models"
+	"github.com/Clever/kayvee-go/v7/logger"
 	"github.com/go-errors/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/gorilla/mux"
-	"github.com/opentracing/opentracing-go"
-	"github.com/opentracing/opentracing-go/log"
 	"golang.org/x/xerrors"
-	"gopkg.in/Clever/kayvee-go.v6/logger"
 )
 
 var _ = strconv.ParseInt
@@ -27,7 +25,6 @@ var _ = errors.New
 var _ = mux.Vars
 var _ = bytes.Compare
 var _ = ioutil.ReadAll
-var _ = log.String
 
 var formats = strfmt.Default
 var _ = formats
@@ -123,9 +120,6 @@ func (h handler) HealthCheckHandler(ctx context.Context, w http.ResponseWriter, 
 func newHealthCheckInput(r *http.Request) (*models.HealthCheckInput, error) {
 	var input models.HealthCheckInput
 
-	sp := opentracing.SpanFromContext(r.Context())
-	_ = sp
-
 	var err error
 	_ = err
 
@@ -169,8 +163,6 @@ func statusCodeForGetTableLatency(obj interface{}) int {
 
 func (h handler) GetTableLatencyHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
-	sp := opentracing.SpanFromContext(ctx)
-
 	input, err := newGetTableLatencyInput(r)
 	if err != nil {
 		logger.FromContext(ctx).AddContext("error", err.Error())
@@ -206,9 +198,6 @@ func (h handler) GetTableLatencyHandler(ctx context.Context, w http.ResponseWrit
 		return
 	}
 
-	jsonSpan, _ := opentracing.StartSpanFromContext(ctx, "json-response-marshaling")
-	defer jsonSpan.Finish()
-
 	respBytes, err := json.Marshal(resp)
 	if err != nil {
 		logger.FromContext(ctx).AddContext("error", err.Error())
@@ -216,7 +205,6 @@ func (h handler) GetTableLatencyHandler(ctx context.Context, w http.ResponseWrit
 		return
 	}
 
-	sp.LogFields(log.Int("response-size-bytes", len(respBytes)))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCodeForGetTableLatency(resp))
 	w.Write(respBytes)
@@ -225,9 +213,6 @@ func (h handler) GetTableLatencyHandler(ctx context.Context, w http.ResponseWrit
 
 // newGetTableLatencyInput takes in an http.Request an returns the input struct.
 func newGetTableLatencyInput(r *http.Request) (*models.GetTableLatencyRequest, error) {
-	sp := opentracing.SpanFromContext(r.Context())
-	_ = sp
-
 	var err error
 	_ = err
 
@@ -235,18 +220,12 @@ func newGetTableLatencyInput(r *http.Request) (*models.GetTableLatencyRequest, e
 	if len(data) == 0 {
 		return nil, errors.New("request body is required, but was empty")
 	}
-	sp.LogFields(log.Int("request-size-bytes", len(data)))
-
 	if len(data) > 0 {
-		jsonSpan, _ := opentracing.StartSpanFromContext(r.Context(), "json-request-marshaling")
-		defer jsonSpan.Finish()
-
 		var input models.GetTableLatencyRequest
 		if err := json.NewDecoder(bytes.NewReader(data)).Decode(&input); err != nil {
 			return nil, err
 		}
 		return &input, nil
-
 	}
 
 	return nil, nil
@@ -283,8 +262,6 @@ func statusCodeForGetAllLegacyConfigs(obj interface{}) int {
 
 func (h handler) GetAllLegacyConfigsHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
-	sp := opentracing.SpanFromContext(ctx)
-
 	resp, err := h.GetAllLegacyConfigs(ctx)
 
 	if err != nil {
@@ -303,9 +280,6 @@ func (h handler) GetAllLegacyConfigsHandler(ctx context.Context, w http.Response
 		return
 	}
 
-	jsonSpan, _ := opentracing.StartSpanFromContext(ctx, "json-response-marshaling")
-	defer jsonSpan.Finish()
-
 	respBytes, err := json.Marshal(resp)
 	if err != nil {
 		logger.FromContext(ctx).AddContext("error", err.Error())
@@ -313,7 +287,6 @@ func (h handler) GetAllLegacyConfigsHandler(ctx context.Context, w http.Response
 		return
 	}
 
-	sp.LogFields(log.Int("response-size-bytes", len(respBytes)))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCodeForGetAllLegacyConfigs(resp))
 	w.Write(respBytes)
@@ -323,9 +296,6 @@ func (h handler) GetAllLegacyConfigsHandler(ctx context.Context, w http.Response
 // newGetAllLegacyConfigsInput takes in an http.Request an returns the input struct.
 func newGetAllLegacyConfigsInput(r *http.Request) (*models.GetAllLegacyConfigsInput, error) {
 	var input models.GetAllLegacyConfigsInput
-
-	sp := opentracing.SpanFromContext(r.Context())
-	_ = sp
 
 	var err error
 	_ = err

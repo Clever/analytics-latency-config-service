@@ -6,7 +6,7 @@ import (
 	"github.com/Clever/analytics-latency-config-service/gen-go/models"
 )
 
-//go:generate mockgen -source=$GOFILE -destination=mock_client.go -package=client
+//go:generate mockgen -source=$GOFILE -destination=mock_client.go -package client --build_flags=--mod=mod -imports=models=github.com/Clever/analytics-latency-config-service/gen-go/models
 
 // Client defines the methods available to clients of the analytics-latency-config-service service.
 type Client interface {

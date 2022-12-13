@@ -6,7 +6,7 @@ import (
 	"github.com/Clever/analytics-latency-config-service/gen-go/models"
 )
 
-//go:generate mockgen -source=$GOFILE -destination=mock_controller.go -package=server
+//go:generate mockgen -source=$GOFILE -destination=mock_controller.go -package server --build_flags=--mod=mod -imports=models=github.com/Clever/analytics-latency-config-service/gen-go/models
 
 // Controller defines the interface for the analytics-latency-config-service service.
 type Controller interface {

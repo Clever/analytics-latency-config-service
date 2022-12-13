@@ -2,14 +2,8 @@ const async = require("async");
 const discovery = require("clever-discovery");
 const kayvee = require("kayvee");
 const request = require("request");
-const opentracing = require("opentracing");
 const {commandFactory} = require("hystrixjs");
 const RollingNumberEvent = require("hystrixjs/lib/metrics/RollingNumberEvent");
-
-/**
- * @external Span
- * @see {@link https://doc.esdoc.org/github.com/opentracing/opentracing-javascript/class/src/span.js~Span.html}
- */
 
 const { Errors } = require("./types");
 
@@ -195,11 +189,6 @@ class AnalyticsLatencyConfigService {
     } else {
       this.logger = new kayvee.logger((options.serviceName || "analytics-latency-config-service") + "-wagclient");
     }
-    if (options.tracer) {
-      this.tracer = options.tracer;
-    } else {
-      this.tracer = opentracing.globalTracer();
-    }
 
     const circuitOptions = Object.assign({}, defaultCircuitOptions, options.circuit);
     this._hystrixCommand = commandFactory.getOrCreate(options.serviceName || "analytics-latency-config-service").
@@ -216,7 +205,14 @@ class AnalyticsLatencyConfigService {
       context(this).
       build();
 
-    setInterval(() => this._logCircuitState(), circuitOptions.logIntervalMs);
+    this._logCircuitStateInterval = setInterval(() => this._logCircuitState(), circuitOptions.logIntervalMs);
+  }
+
+  /**
+  * Releases handles used in client
+  */
+  close() {
+    clearInterval(this._logCircuitStateInterval);
   }
 
   _hystrixCommandErrorHandler(err) {
@@ -254,7 +250,6 @@ class AnalyticsLatencyConfigService {
    * Checks if the service is healthy
    * @param {object} [options]
    * @param {number} [options.timeout] - A request specific timeout
-   * @param {external:Span} [options.span] - An OpenTracing span - For example from the parent request
    * @param {module:analytics-latency-config-service.RetryPolicies} [options.retryPolicy] - A request specific retryPolicy
    * @param {function} [cb]
    * @returns {Promise}
@@ -284,21 +279,12 @@ class AnalyticsLatencyConfigService {
       }
 
       const timeout = options.timeout || this.timeout;
-      const tracer = options.tracer || this.tracer;
-      const span = options.span;
 
       const headers = {};
       headers["Canonical-Resource"] = "healthCheck";
       headers[versionHeader] = version;
 
       const query = {};
-
-      if (span && typeof span.log === "function") {
-        // Need to get tracer to inject. Use HTTP headers format so we can properly escape special characters
-        tracer.inject(span, opentracing.FORMAT_HTTP_HEADERS, headers);
-        span.log({event: "GET /_health"});
-        span.setTag("span.kind", "client");
-      }
 
       const requestOptions = {
         method: "GET",
@@ -367,7 +353,6 @@ class AnalyticsLatencyConfigService {
    * @param request
    * @param {object} [options]
    * @param {number} [options.timeout] - A request specific timeout
-   * @param {external:Span} [options.span] - An OpenTracing span - For example from the parent request
    * @param {module:analytics-latency-config-service.RetryPolicies} [options.retryPolicy] - A request specific retryPolicy
    * @param {function} [cb]
    * @returns {Promise}
@@ -399,21 +384,12 @@ class AnalyticsLatencyConfigService {
       }
 
       const timeout = options.timeout || this.timeout;
-      const tracer = options.tracer || this.tracer;
-      const span = options.span;
 
       const headers = {};
       headers["Canonical-Resource"] = "getTableLatency";
       headers[versionHeader] = version;
 
       const query = {};
-
-      if (span && typeof span.log === "function") {
-        // Need to get tracer to inject. Use HTTP headers format so we can properly escape special characters
-        tracer.inject(span, opentracing.FORMAT_HTTP_HEADERS, headers);
-        span.log({event: "GET /latency"});
-        span.setTag("span.kind", "client");
-      }
 
       const requestOptions = {
         method: "GET",
@@ -489,7 +465,6 @@ class AnalyticsLatencyConfigService {
   /**
    * @param {object} [options]
    * @param {number} [options.timeout] - A request specific timeout
-   * @param {external:Span} [options.span] - An OpenTracing span - For example from the parent request
    * @param {module:analytics-latency-config-service.RetryPolicies} [options.retryPolicy] - A request specific retryPolicy
    * @param {function} [cb]
    * @returns {Promise}
@@ -519,21 +494,12 @@ class AnalyticsLatencyConfigService {
       }
 
       const timeout = options.timeout || this.timeout;
-      const tracer = options.tracer || this.tracer;
-      const span = options.span;
 
       const headers = {};
       headers["Canonical-Resource"] = "getAllLegacyConfigs";
       headers[versionHeader] = version;
 
       const query = {};
-
-      if (span && typeof span.log === "function") {
-        // Need to get tracer to inject. Use HTTP headers format so we can properly escape special characters
-        tracer.inject(span, opentracing.FORMAT_HTTP_HEADERS, headers);
-        span.log({event: "GET /legacy_config"});
-        span.setTag("span.kind", "client");
-      }
 
       const requestOptions = {
         method: "GET",
@@ -619,7 +585,7 @@ module.exports.Errors = Errors;
 
 module.exports.DefaultCircuitOptions = defaultCircuitOptions;
 
-const version = "0.4.0";
+const version = "0.5.0";
 const versionHeader = "X-Client-Version";
 module.exports.Version = version;
 module.exports.VersionHeader = versionHeader;

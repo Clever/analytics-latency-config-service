@@ -6,13 +6,13 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // LatencySpec LatencySpec stores information for a latency check
+//
 // swagger:model LatencySpec
 type LatencySpec struct {
 
@@ -28,7 +28,6 @@ func (m *LatencySpec) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateThresholds(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -45,7 +44,6 @@ func (m *LatencySpec) validateThresholds(formats strfmt.Registry) error {
 	}
 
 	if m.Thresholds != nil {
-
 		if err := m.Thresholds.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("thresholds")

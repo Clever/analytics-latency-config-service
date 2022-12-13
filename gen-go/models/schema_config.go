@@ -8,13 +8,13 @@ package models
 import (
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // SchemaConfig SchemaConfig configures latency checks by schema
+//
 // swagger:model SchemaConfig
 type SchemaConfig struct {
 
@@ -44,38 +44,17 @@ type SchemaConfig struct {
 func (m *SchemaConfig) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateBlacklist(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateDefaultThresholds(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateTableOverrides(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateWhitelist(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *SchemaConfig) validateBlacklist(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Blacklist) { // not required
-		return nil
-	}
-
 	return nil
 }
 
@@ -86,7 +65,6 @@ func (m *SchemaConfig) validateDefaultThresholds(formats strfmt.Registry) error 
 	}
 
 	if m.DefaultThresholds != nil {
-
 		if err := m.DefaultThresholds.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("defaultThresholds")
@@ -105,13 +83,11 @@ func (m *SchemaConfig) validateTableOverrides(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.TableOverrides); i++ {
-
 		if swag.IsZero(m.TableOverrides[i]) { // not required
 			continue
 		}
 
 		if m.TableOverrides[i] != nil {
-
 			if err := m.TableOverrides[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("tableOverrides" + "." + strconv.Itoa(i))
@@ -120,15 +96,6 @@ func (m *SchemaConfig) validateTableOverrides(formats strfmt.Registry) error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *SchemaConfig) validateWhitelist(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Whitelist) { // not required
-		return nil
 	}
 
 	return nil

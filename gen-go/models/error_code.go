@@ -8,17 +8,18 @@ package models
 import (
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 )
 
 // ErrorCode error code
+//
 // swagger:model ErrorCode
 type ErrorCode string
 
 const (
+
 	// ErrorCodeInvalidID captures enum value "InvalidID"
 	ErrorCodeInvalidID ErrorCode = "InvalidID"
 )

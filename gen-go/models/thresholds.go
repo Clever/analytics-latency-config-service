@@ -6,13 +6,12 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
-
-	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // Thresholds Thresholds holds values for all of the different thresholds we might want to check against. Null values are not overridden, empty values are "unset", to not alert at that level. Otherwise, each `threshold` expects a string formatted Golang duration
+//
 // swagger:model Thresholds
 type Thresholds struct {
 
@@ -31,11 +30,6 @@ type Thresholds struct {
 
 // Validate validates this thresholds
 func (m *Thresholds) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

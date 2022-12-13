@@ -9,7 +9,7 @@ PKG = github.com/Clever/$(APP_NAME)
 PKGS := $(shell go list ./... | grep -v /vendor | grep -v /gen-go | grep -v /tools | grep -v /tools)
 
 # Temporarily pin to wag 6.4.5 until after migrated to go mod and Go 1.16
-WAG_VERSION := v6.4.5
+WAG_VERSION := latest
 
 $(eval $(call golang-version-check,1.16))
 

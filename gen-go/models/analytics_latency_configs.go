@@ -8,14 +8,14 @@ package models
 import (
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // AnalyticsLatencyConfigs analytics latency configs
+//
 // swagger:model AnalyticsLatencyConfigs
 type AnalyticsLatencyConfigs struct {
 
@@ -41,22 +41,18 @@ func (m *AnalyticsLatencyConfigs) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateRdsExternal(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateRdsInternal(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateRedshiftFast(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateSnowflake(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -73,13 +69,11 @@ func (m *AnalyticsLatencyConfigs) validateRdsExternal(formats strfmt.Registry) e
 	}
 
 	for i := 0; i < len(m.RdsExternal); i++ {
-
 		if swag.IsZero(m.RdsExternal[i]) { // not required
 			continue
 		}
 
 		if m.RdsExternal[i] != nil {
-
 			if err := m.RdsExternal[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("rdsExternal" + "." + strconv.Itoa(i))
@@ -100,13 +94,11 @@ func (m *AnalyticsLatencyConfigs) validateRdsInternal(formats strfmt.Registry) e
 	}
 
 	for i := 0; i < len(m.RdsInternal); i++ {
-
 		if swag.IsZero(m.RdsInternal[i]) { // not required
 			continue
 		}
 
 		if m.RdsInternal[i] != nil {
-
 			if err := m.RdsInternal[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("rdsInternal" + "." + strconv.Itoa(i))
@@ -127,13 +119,11 @@ func (m *AnalyticsLatencyConfigs) validateRedshiftFast(formats strfmt.Registry) 
 	}
 
 	for i := 0; i < len(m.RedshiftFast); i++ {
-
 		if swag.IsZero(m.RedshiftFast[i]) { // not required
 			continue
 		}
 
 		if m.RedshiftFast[i] != nil {
-
 			if err := m.RedshiftFast[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("redshiftFast" + "." + strconv.Itoa(i))
@@ -154,13 +144,11 @@ func (m *AnalyticsLatencyConfigs) validateSnowflake(formats strfmt.Registry) err
 	}
 
 	for i := 0; i < len(m.Snowflake); i++ {
-
 		if swag.IsZero(m.Snowflake[i]) { // not required
 			continue
 		}
 
 		if m.Snowflake[i] != nil {
-
 			if err := m.Snowflake[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("snowflake" + "." + strconv.Itoa(i))
