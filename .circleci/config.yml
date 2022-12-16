@@ -64,6 +64,8 @@ jobs:
     - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/npm-publish $NPM_TOKEN gen-js/; fi;
     - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then cat ./swagger.yml | grep "^  version:" | cut -d":" -f2 | tr -d " " > ./VERSION; fi;
     - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/github-release $GH_RELEASE_TOKEN; fi;
+    - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/submodule-github-release $GH_RELEASE_TOKEN gen-go/client; fi;
+    - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/submodule-github-release $GH_RELEASE_TOKEN gen-go/models; fi;
 
   unit-test:
     executor: common-executor

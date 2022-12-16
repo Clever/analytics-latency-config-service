@@ -8,23 +8,27 @@ package models
 import (
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 )
 
 // AnalyticsDatabase Analytics databases, in config
+//
 // swagger:model AnalyticsDatabase
 type AnalyticsDatabase string
 
 const (
+
 	// AnalyticsDatabaseRedshiftFast captures enum value "RedshiftFast"
 	AnalyticsDatabaseRedshiftFast AnalyticsDatabase = "RedshiftFast"
+
 	// AnalyticsDatabaseRdsInternal captures enum value "RdsInternal"
 	AnalyticsDatabaseRdsInternal AnalyticsDatabase = "RdsInternal"
+
 	// AnalyticsDatabaseRdsExternal captures enum value "RdsExternal"
 	AnalyticsDatabaseRdsExternal AnalyticsDatabase = "RdsExternal"
+
 	// AnalyticsDatabaseSnowflake captures enum value "Snowflake"
 	AnalyticsDatabaseSnowflake AnalyticsDatabase = "Snowflake"
 )

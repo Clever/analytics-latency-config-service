@@ -6,14 +6,14 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // GetTableLatencyResponse get table latency response
+//
 // swagger:model GetTableLatencyResponse
 type GetTableLatencyResponse struct {
 
@@ -46,27 +46,22 @@ func (m *GetTableLatencyResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateDatabase(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateOwner(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateSchema(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateTable(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateThresholds(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -122,7 +117,6 @@ func (m *GetTableLatencyResponse) validateThresholds(formats strfmt.Registry) er
 	}
 
 	if m.Thresholds != nil {
-
 		if err := m.Thresholds.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("thresholds")

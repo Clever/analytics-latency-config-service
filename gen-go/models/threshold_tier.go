@@ -8,25 +8,30 @@ package models
 import (
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 )
 
 // ThresholdTier Threshold Tiers
+//
 // swagger:model ThresholdTier
 type ThresholdTier string
 
 const (
+
 	// ThresholdTierCritical captures enum value "Critical"
 	ThresholdTierCritical ThresholdTier = "Critical"
+
 	// ThresholdTierMajor captures enum value "Major"
 	ThresholdTierMajor ThresholdTier = "Major"
+
 	// ThresholdTierMinor captures enum value "Minor"
 	ThresholdTierMinor ThresholdTier = "Minor"
+
 	// ThresholdTierRefresh captures enum value "Refresh"
 	ThresholdTierRefresh ThresholdTier = "Refresh"
+
 	// ThresholdTierNone captures enum value "None"
 	ThresholdTierNone ThresholdTier = "None"
 )

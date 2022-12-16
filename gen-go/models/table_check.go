@@ -6,13 +6,13 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // TableCheck TableCheck configures a single latency check for a table
+//
 // swagger:model TableCheck
 type TableCheck struct {
 
@@ -31,7 +31,6 @@ func (m *TableCheck) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateLatencySpec(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -48,7 +47,6 @@ func (m *TableCheck) validateLatencySpec(formats strfmt.Registry) error {
 	}
 
 	if m.LatencySpec != nil {
-
 		if err := m.LatencySpec.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("latencySpec")
