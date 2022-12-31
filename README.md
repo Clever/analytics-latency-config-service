@@ -62,3 +62,4 @@ Note: `table_overrides`, `whitelist`, and `blacklist` must be in sync, as follow
 ```
 ark start analytics-latency-config-service
 ```
+test
