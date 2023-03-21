@@ -24,8 +24,8 @@ env:
 - SNOWFLAKE_ROLE
 - LATENCY_CONFIG
 resources:
-  cpu: 0.25
-  max_mem: 0.5
+  cpu: 0.5
+  max_mem: 1.0
 shepherds:
 - benji.stein@clever.com
 expose:
