@@ -152,6 +152,11 @@ declare namespace AnalyticsLatencyConfigService {
   refresh?: string;
 };
     
+    type UnknownResponse = {
+  body?: string;
+  statusCode?: number;
+};
+    
   }
 }
 
