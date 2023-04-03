@@ -74,8 +74,8 @@ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym
 github.com/Clever/go-process-metrics v0.4.0 h1:f7sqN8NxRlLV0phlTRPe1/wDmVOqW/EnILM6J+MkcLE=
 github.com/Clever/go-process-metrics v0.4.0/go.mod h1:nT1q7aJkDqYYwRFfqmuM3akED4ambORB+WhunT9jTEk=
 github.com/Clever/kayvee-go/v7 v7.4.0/go.mod h1:LvO0+U9vKd45yv2j9MtTA1r5LTTf+epSXsxMfw1WNd8=
-github.com/Clever/kayvee-go/v7 v7.6.0 h1:0oKF/yLSZZG0cJoYyuXj49zVU41I1eySvfHunlJkw7A=
-github.com/Clever/kayvee-go/v7 v7.6.0/go.mod h1:B2IcQE7OK8rpYvDotSAvCtfZqZ1UqTs1YacM+YFtxR8=
+github.com/Clever/kayvee-go/v7 v7.7.0 h1:quAQ5s1mcLqXjU3AgLg1A2lOIH102G8zEkasvJdBVlY=
+github.com/Clever/kayvee-go/v7 v7.7.0/go.mod h1:B2IcQE7OK8rpYvDotSAvCtfZqZ1UqTs1YacM+YFtxR8=
 github.com/Clever/pq v0.2.0 h1:dE0BboWBPWuXNc3QYI08+4NLHEBvuWbSdaWo23oeAIs=
 github.com/Clever/pq v0.2.0/go.mod h1:y0iLP1oF7nbGzy78+hn8ZeqFP1OY3r1jotlyH2xxiBo=
 github.com/Clever/wag v4.1.0+incompatible h1:/7y61nKf6d3VKYk+/XFw1e7tmXG6tu4AO3UmFhROfa0=
