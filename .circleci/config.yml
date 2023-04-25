@@ -4,7 +4,7 @@ executors:
   common-executor:
     working_directory: /go/src/github.com/Clever/analytics-latency-config-service
     docker:
-    - image: circleci/golang:1.16-stretch-node
+    - image: circleci/golang:1.16-buster-node
     - image: circleci/postgres:9.4-alpine-ram
     - image: circleci/mongo:3.2.20-jessie-ram
       environment:
