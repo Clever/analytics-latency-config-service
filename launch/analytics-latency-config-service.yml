@@ -91,4 +91,4 @@ mesh_config:
     state: mesh_only
   crossRegionRoute: non-sso
   prod:
-    state: hybrid
+    state: mesh_only
