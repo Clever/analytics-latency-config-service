@@ -4,12 +4,12 @@ executors:
   common-executor:
     working_directory: /go/src/github.com/Clever/analytics-latency-config-service
     docker:
-    - image: circleci/golang:1.16-buster-node
-    - image: circleci/postgres:9.4-alpine-ram
-    - image: circleci/mongo:3.2.20-jessie-ram
-      environment:
-        GOPRIVATE: github.com/Clever/*
-        POSTGRES_USER: postgres
+      - image: circleci/golang:1.16-buster-node
+      - image: circleci/postgres:9.4-alpine-ram
+      - image: circleci/mongo:3.2.20-jessie-ram
+        environment:
+          GOPRIVATE: github.com/Clever/*
+          POSTGRES_USER: postgres
 
     environment:
       GOPRIVATE: github.com/Clever/*
@@ -21,99 +21,101 @@ commands:
   clone-ci-scripts:
     description: Clone the ci-scripts repo
     steps:
-    - run:
-        command: cd .. && git clone --depth 1 -v https://github.com/Clever/ci-scripts.git && cd ci-scripts && git show --oneline -s
-        name: Clone ci-scripts
+      - run:
+          command: cd .. && git clone --depth 1 -v https://github.com/Clever/ci-scripts.git && cd ci-scripts && git show --oneline -s
+          name: Clone ci-scripts
 
 jobs:
   build:
     executor: common-executor
     steps:
-    - checkout
-    - run:
-        command: sudo apt-get update && sudo apt-get install postgresql
-        name: Install psql
-    - run:
-        command: |-
-          echo Waiting for postgres
-          for i in `seq 1 10`;
-          do
-            nc -z localhost 5432 && echo Success && exit 0
-            echo -n .
-            sleep 1
-          done
-          echo Failed waiting for postgres && exit 1
-        name: Wait for postgres database to be ready
-    - run: make install_deps
-    - run: make db-setup
-    - run: make build
-    - run: make test
-    - persist_to_workspace:
-        root: /go/src/github.com/Clever
-        paths: "."
+      - checkout
+      - run:
+          command: sudo apt-get update && sudo apt-get install postgresql
+          name: Install psql
+      - run:
+          command: |-
+            echo Waiting for postgres
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for postgres && exit 1
+          name: Wait for postgres database to be ready
+      - run: make install_deps
+      - run: make db-setup
+      - run: make build
+      - run: make test
+      - persist_to_workspace:
+          root: /go/src/github.com/Clever
+          paths: .
 
   publish:
     executor: common-executor
     steps:
-    - attach_workspace:
-        at: /go/src/github.com/Clever
-    - clone-ci-scripts
-    - setup_remote_docker
-    - run: ../ci-scripts/circleci/docker-publish $DOCKER_USER $DOCKER_PASS "$DOCKER_EMAIL" $DOCKER_ORG
-    - run: ../ci-scripts/circleci/catapult-publish $CATAPULT_URL $CATAPULT_USER $CATAPULT_PASS $APP_NAME
-    - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/npm-publish $NPM_TOKEN gen-js/; fi;
-    - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then cat ./swagger.yml | grep "^  version:" | cut -d":" -f2 | tr -d " " > ./VERSION; fi;
-    - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/github-release $GH_RELEASE_TOKEN; fi;
-    - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/submodule-github-release $GH_RELEASE_TOKEN gen-go/client; fi;
-    - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/submodule-github-release $GH_RELEASE_TOKEN gen-go/models; fi;
+      - attach_workspace:
+          at: /go/src/github.com/Clever
+      - clone-ci-scripts
+      - setup_remote_docker
+      - run: ../ci-scripts/circleci/docker-publish $DOCKER_USER $DOCKER_PASS "$DOCKER_EMAIL" $DOCKER_ORG
+      - run: ../ci-scripts/circleci/catapult-publish $CATAPULT_URL $CATAPULT_USER $CATAPULT_PASS $APP_NAME
+      - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/npm-publish $NPM_TOKEN gen-js/; fi;
+      - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then cat ./swagger.yml | grep "^  version:" | cut -d":" -f2 | tr -d " " > ./VERSION; fi;
+      - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/github-release $GH_RELEASE_TOKEN; fi;
+      - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/submodule-github-release $GH_RELEASE_TOKEN gen-go/client; fi;
+      - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/submodule-github-release $GH_RELEASE_TOKEN gen-go/models; fi;
 
   unit-test:
     executor: common-executor
     steps:
-    - attach_workspace:
-        at: /go/src/github.com/Clever
-    - run:
-        command: sudo apt-get update && sudo apt-get install postgresql
-        name: Install psql
-    - run:
-        command: |-
-          echo Waiting for postgres
-          for i in `seq 1 10`;
-          do
-            nc -z localhost 5432 && echo Success && exit 0
-            echo -n .
-            sleep 1
-          done
-          echo Failed waiting for postgres && exit 1
-        name: Wait for postgres database to be ready
-    - run:
-        command: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
-        name: Set up CircleCI artifacts directories
-    - run:
-        command: git config --global "url.ssh://git@github.com/Clever".insteadOf "https://github.com/Clever"
-    - run:
-        name: Add github.com to known hosts
-        command: mkdir -p ~/.ssh && touch ~/.ssh/known_hosts && echo 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=' >> ~/.ssh/known_hosts
-    - run: make db-setup
-    - run: make test
+      - attach_workspace:
+          at: /go/src/github.com/Clever
+      - run:
+          command: sudo apt-get update && sudo apt-get install postgresql
+          name: Install psql
+      - run:
+          command: |-
+            echo Waiting for postgres
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for postgres && exit 1
+          name: Wait for postgres database to be ready
+      - run:
+          command: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
+          name: Set up CircleCI artifacts directories
+      - run:
+          command: git config --global "url.ssh://git@github.com/Clever".insteadOf "https://github.com/Clever"
+      - run:
+          name: Add github.com to known hosts
+          command: mkdir -p ~/.ssh && touch ~/.ssh/known_hosts && echo 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=' >> ~/.ssh/known_hosts
+      - run: make db-setup
+      - run: make test
 
   deploy:
     executor: common-executor
     steps:
-    - clone-ci-scripts
-    - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/dapple-deploy $DAPPLE_URL $DAPPLE_USER $DAPPLE_PASS $APP_NAME; fi;
+      - clone-ci-scripts
+      - run: if [ "${CIRCLE_BRANCH}" == "master" ]; then ../ci-scripts/circleci/dapple-deploy $DAPPLE_URL $DAPPLE_USER $DAPPLE_PASS $APP_NAME; fi;
 workflows:
   version: 2.1
   build_test_publish_deploy:
     jobs:
-    - build
-    - unit-test:
-        requires:
-        - build
-    - publish:
-        requires:
-        - build
-    - deploy:
-        requires:
-        - unit-test
-        - publish
+      - build
+      - unit-test:
+          requires:
+            - build
+      - publish:
+          requires:
+            - build
+          context:
+            - aws-ecr-public
+      - deploy:
+          requires:
+            - unit-test
+            - publish
