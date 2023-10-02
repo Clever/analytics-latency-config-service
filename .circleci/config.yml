@@ -2,9 +2,9 @@ version: 2.1
 
 executors:
   common-executor:
-    working_directory: /go/src/github.com/Clever/analytics-latency-config-service
+    working_directory: ~/go/src/github.com/Clever/analytics-latency-config-service
     docker:
-      - image: circleci/golang:1.16-buster-node
+      - image: cimg/go:1.21-node
       - image: circleci/postgres:9.4-alpine-ram
       - image: circleci/mongo:3.2.20-jessie-ram
         environment:
@@ -49,14 +49,14 @@ jobs:
       - run: make build
       - run: make test
       - persist_to_workspace:
-          root: /go/src/github.com/Clever
+          root: ~/go/src/github.com/Clever
           paths: .
 
   publish:
     executor: common-executor
     steps:
       - attach_workspace:
-          at: /go/src/github.com/Clever
+          at: ~/go/src/github.com/Clever
       - clone-ci-scripts
       - setup_remote_docker
       - run: ../ci-scripts/circleci/docker-publish $DOCKER_USER $DOCKER_PASS "$DOCKER_EMAIL" $DOCKER_ORG
@@ -71,7 +71,7 @@ jobs:
     executor: common-executor
     steps:
       - attach_workspace:
-          at: /go/src/github.com/Clever
+          at: ~/go/src/github.com/Clever
       - run:
           command: sudo apt-get update && sudo apt-get install postgresql
           name: Install psql
