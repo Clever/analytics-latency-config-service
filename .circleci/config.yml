@@ -6,7 +6,6 @@ executors:
     docker:
       - image: cimg/go:1.21-node
       - image: circleci/postgres:9.4-alpine-ram
-      - image: circleci/mongo:3.2.20-jessie-ram
         environment:
           GOPRIVATE: github.com/Clever/*
           POSTGRES_USER: postgres
