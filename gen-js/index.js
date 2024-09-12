@@ -2,10 +2,28 @@ const async = require("async");
 const discovery = require("clever-discovery");
 const kayvee = require("kayvee");
 const request = require("request");
-const {commandFactory} = require("hystrixjs");
+const {commandFactory, circuitFactory, metricsFactory} = require("hystrixjs");
 const RollingNumberEvent = require("hystrixjs/lib/metrics/RollingNumberEvent");
 
 const { Errors } = require("./types");
+
+function parseForBaggage(entries) {
+  // Regular expression for valid characters in keys and values
+  const validChars = /^[a-zA-Z0-9!#$%&'*+`\-.^_`|~]+$/;
+  // Transform the entries object into an array of strings
+  const baggageItems = Object.entries(entries).map(([key, value]) => {
+    // Remove invalid characters from key and value
+    const validKey = key.match(validChars) ? key : encodeURIComponent(key);
+    const validValue = value.match(validChars) ? value : encodeURIComponent(value);
+
+    return `${validKey}=${validValue}`;
+  });
+
+  // Combine the array of strings into the final baggageString
+  const baggageString = baggageItems.join(',');
+
+  return baggageString;
+}
 
 /**
  * The exponential retry policy will retry five times with an exponential backoff.
@@ -80,9 +98,13 @@ function responseLog(logger, req, res, err) {
     "message": err || (res.statusMessage || ""),
     "status_code": res.statusCode || 0,
   };
-
+  
   if (err) {
-    logger.errorD("client-request-finished", logData);
+	if (logData.status_code <= 499){
+		logger.warnD("client-request-finished", logData);
+	}else{
+		logger.errorD("client-request-finished", logData);
+	}
   } else {
     logger.infoD("client-request-finished", logData);
   }
@@ -191,6 +213,11 @@ class AnalyticsLatencyConfigService {
     }
 
     const circuitOptions = Object.assign({}, defaultCircuitOptions, options.circuit);
+    // hystrix implements a caching mechanism, we don't want this or we can't trust that clients
+    // are initialized with the values passed in. 
+    commandFactory.resetCache();
+    circuitFactory.resetCache();
+    metricsFactory.resetCache();
     this._hystrixCommand = commandFactory.getOrCreate(options.serviceName || "analytics-latency-config-service").
       errorHandler(this._hystrixCommandErrorHandler).
       circuitBreakerForceClosed(circuitOptions.forceClosed).
@@ -250,6 +277,7 @@ class AnalyticsLatencyConfigService {
    * Checks if the service is healthy
    * @param {object} [options]
    * @param {number} [options.timeout] - A request specific timeout
+   * @param {object} [options.baggage] - A request specific baggage to be propagated
    * @param {module:analytics-latency-config-service.RetryPolicies} [options.retryPolicy] - A request specific retryPolicy
    * @param {function} [cb]
    * @returns {Promise}
@@ -277,10 +305,32 @@ class AnalyticsLatencyConfigService {
       if (!options) {
         options = {};
       }
+  
+      const optionsBaggage = options.baggage || {}
 
       const timeout = options.timeout || this.timeout;
 
       const headers = {};
+      
+      if (headers["baggage"]) {
+        const existingBaggageItems = headers["baggage"].split(',');
+        const existingBaggage = {};
+    
+        for (const item of existingBaggageItems) {
+          const [key, value] = item.split('=');
+          existingBaggage[key] = value;
+        }
+    
+        // Merge existingBaggage and optionsBaggage. Values in optionsBaggage will overwrite those in existingBaggage.
+        const mergedBaggage = {...existingBaggage, ...optionsBaggage};
+    
+        // Convert mergedBaggage back into a string using parseForBaggage
+        headers["baggage"] = parseForBaggage(mergedBaggage);
+      } else {
+        // Convert optionsBaggage into a string using parseForBaggage
+        headers["baggage"] = parseForBaggage(optionsBaggage);
+      }
+      
       headers["Canonical-Resource"] = "healthCheck";
       headers[versionHeader] = version;
 
@@ -353,6 +403,7 @@ class AnalyticsLatencyConfigService {
    * @param request
    * @param {object} [options]
    * @param {number} [options.timeout] - A request specific timeout
+   * @param {object} [options.baggage] - A request specific baggage to be propagated
    * @param {module:analytics-latency-config-service.RetryPolicies} [options.retryPolicy] - A request specific retryPolicy
    * @param {function} [cb]
    * @returns {Promise}
@@ -382,10 +433,32 @@ class AnalyticsLatencyConfigService {
       if (!options) {
         options = {};
       }
+  
+      const optionsBaggage = options.baggage || {}
 
       const timeout = options.timeout || this.timeout;
 
       const headers = {};
+      
+      if (headers["baggage"]) {
+        const existingBaggageItems = headers["baggage"].split(',');
+        const existingBaggage = {};
+    
+        for (const item of existingBaggageItems) {
+          const [key, value] = item.split('=');
+          existingBaggage[key] = value;
+        }
+    
+        // Merge existingBaggage and optionsBaggage. Values in optionsBaggage will overwrite those in existingBaggage.
+        const mergedBaggage = {...existingBaggage, ...optionsBaggage};
+    
+        // Convert mergedBaggage back into a string using parseForBaggage
+        headers["baggage"] = parseForBaggage(mergedBaggage);
+      } else {
+        // Convert optionsBaggage into a string using parseForBaggage
+        headers["baggage"] = parseForBaggage(optionsBaggage);
+      }
+      
       headers["Canonical-Resource"] = "getTableLatency";
       headers[versionHeader] = version;
 
@@ -465,6 +538,7 @@ class AnalyticsLatencyConfigService {
   /**
    * @param {object} [options]
    * @param {number} [options.timeout] - A request specific timeout
+   * @param {object} [options.baggage] - A request specific baggage to be propagated
    * @param {module:analytics-latency-config-service.RetryPolicies} [options.retryPolicy] - A request specific retryPolicy
    * @param {function} [cb]
    * @returns {Promise}
@@ -492,10 +566,32 @@ class AnalyticsLatencyConfigService {
       if (!options) {
         options = {};
       }
+  
+      const optionsBaggage = options.baggage || {}
 
       const timeout = options.timeout || this.timeout;
 
       const headers = {};
+      
+      if (headers["baggage"]) {
+        const existingBaggageItems = headers["baggage"].split(',');
+        const existingBaggage = {};
+    
+        for (const item of existingBaggageItems) {
+          const [key, value] = item.split('=');
+          existingBaggage[key] = value;
+        }
+    
+        // Merge existingBaggage and optionsBaggage. Values in optionsBaggage will overwrite those in existingBaggage.
+        const mergedBaggage = {...existingBaggage, ...optionsBaggage};
+    
+        // Convert mergedBaggage back into a string using parseForBaggage
+        headers["baggage"] = parseForBaggage(mergedBaggage);
+      } else {
+        // Convert optionsBaggage into a string using parseForBaggage
+        headers["baggage"] = parseForBaggage(optionsBaggage);
+      }
+      
       headers["Canonical-Resource"] = "getAllLegacyConfigs";
       headers[versionHeader] = version;
 

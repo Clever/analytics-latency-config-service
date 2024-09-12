@@ -78,8 +78,6 @@ func GetDatabaseConfig(configs models.AnalyticsLatencyConfigs, database models.A
 	switch database {
 	case models.AnalyticsDatabaseRedshiftFast:
 		return configs.RedshiftFast, nil
-	case models.AnalyticsDatabaseRdsInternal:
-		return configs.RdsInternal, nil
 	case models.AnalyticsDatabaseRdsExternal:
 		return configs.RdsExternal, nil
 	case models.AnalyticsDatabaseSnowflake:

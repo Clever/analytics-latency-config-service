@@ -186,15 +186,10 @@ definitions:
   AnalyticsLatencyConfigs:
     required:
       - redshiftFast
-      - rdsInternal
       - rdsExternal
       - snowflake
     properties:
       redshiftFast:
-        type: array
-        items:
-          $ref: "#/definitions/SchemaConfig"
-      rdsInternal:
         type: array
         items:
           $ref: "#/definitions/SchemaConfig"
@@ -212,7 +207,6 @@ definitions:
     description: Analytics databases, in config
     enum:
       - "RedshiftFast"
-      - "RdsInternal"
       - "RdsExternal"
       - "Snowflake"
 

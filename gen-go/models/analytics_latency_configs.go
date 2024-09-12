@@ -23,10 +23,6 @@ type AnalyticsLatencyConfigs struct {
 	// Required: true
 	RdsExternal []*SchemaConfig `json:"rdsExternal"`
 
-	// rds internal
-	// Required: true
-	RdsInternal []*SchemaConfig `json:"rdsInternal"`
-
 	// redshift fast
 	// Required: true
 	RedshiftFast []*SchemaConfig `json:"redshiftFast"`
@@ -41,10 +37,6 @@ func (m *AnalyticsLatencyConfigs) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateRdsExternal(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateRdsInternal(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -77,31 +69,6 @@ func (m *AnalyticsLatencyConfigs) validateRdsExternal(formats strfmt.Registry) e
 			if err := m.RdsExternal[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("rdsExternal" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *AnalyticsLatencyConfigs) validateRdsInternal(formats strfmt.Registry) error {
-
-	if err := validate.Required("rdsInternal", "body", m.RdsInternal); err != nil {
-		return err
-	}
-
-	for i := 0; i < len(m.RdsInternal); i++ {
-		if swag.IsZero(m.RdsInternal[i]) { // not required
-			continue
-		}
-
-		if m.RdsInternal[i] != nil {
-			if err := m.RdsInternal[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("rdsInternal" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

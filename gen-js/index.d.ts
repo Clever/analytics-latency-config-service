@@ -105,7 +105,7 @@ declare namespace AnalyticsLatencyConfigService {
 
   namespace Models {
     
-    type AnalyticsDatabase = ("RedshiftFast" | "RdsInternal" | "RdsExternal" | "Snowflake");
+    type AnalyticsDatabase = ("RedshiftFast" | "RdsExternal" | "Snowflake");
     
     type AnalyticsLatencyConfigs = any;
     

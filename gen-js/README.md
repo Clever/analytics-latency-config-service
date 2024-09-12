@@ -72,6 +72,7 @@ Checks if the service is healthy
 | --- | --- | --- |
 | [options] | <code>object</code> |  |
 | [options.timeout] | <code>number</code> | A request specific timeout |
+| [options.baggage] | <code>object</code> | A request specific baggage to be propagated |
 | [options.retryPolicy] | [<code>RetryPolicies</code>](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.RetryPolicies) | A request specific retryPolicy |
 | [cb] | <code>function</code> |  |
 
@@ -90,6 +91,7 @@ Checks if the service is healthy
 | request |  |  |
 | [options] | <code>object</code> |  |
 | [options.timeout] | <code>number</code> | A request specific timeout |
+| [options.baggage] | <code>object</code> | A request specific baggage to be propagated |
 | [options.retryPolicy] | [<code>RetryPolicies</code>](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.RetryPolicies) | A request specific retryPolicy |
 | [cb] | <code>function</code> |  |
 
@@ -106,6 +108,7 @@ Checks if the service is healthy
 | --- | --- | --- |
 | [options] | <code>object</code> |  |
 | [options.timeout] | <code>number</code> | A request specific timeout |
+| [options.baggage] | <code>object</code> | A request specific baggage to be propagated |
 | [options.retryPolicy] | [<code>RetryPolicies</code>](#module_analytics-latency-config-service--AnalyticsLatencyConfigService.RetryPolicies) | A request specific retryPolicy |
 | [cb] | <code>function</code> |  |
 

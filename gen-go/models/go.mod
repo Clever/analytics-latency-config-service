@@ -2,7 +2,7 @@
 module github.com/Clever/analytics-latency-config-service/gen-go/models
 
 
-go 1.16
+go 1.21
 
 require (
 	github.com/go-openapi/errors v0.20.2

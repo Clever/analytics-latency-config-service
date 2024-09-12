@@ -64,19 +64,6 @@ func NewRedshiftFastClient() (*Postgres, error) {
 	return NewPostgresClient(info, "redshift-fast")
 }
 
-// NewRDSInternalClient initializes a client to internal rds
-func NewRDSInternalClient() (*Postgres, error) {
-	info := PostgresCredentials{
-		Host:     config.RDSInternalHost,
-		Port:     config.RDSInternalPort,
-		Username: config.RDSInternalUsername,
-		Password: config.RDSInternalPassword,
-		Database: config.RDSInternalDatabase,
-	}
-
-	return NewPostgresClient(info, "rds-internal")
-}
-
 // NewRDSExternalClient initializes a client to external rds
 func NewRDSExternalClient() (*Postgres, error) {
 	info := PostgresCredentials{

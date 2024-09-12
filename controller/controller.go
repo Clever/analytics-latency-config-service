@@ -16,7 +16,6 @@ import (
 type Controller struct {
 	redshiftFastConnection db.DBClient
 	rdsExternalConnection  db.DBClient
-	rdsInternalConnection  db.DBClient
 	snowflakeConnection    db.DBClient
 	configChecks           models.AnalyticsLatencyConfigs
 }
@@ -25,8 +24,6 @@ func (c *Controller) getDatabaseConnection(database models.AnalyticsDatabase) (d
 	switch database {
 	case models.AnalyticsDatabaseRedshiftFast:
 		return c.redshiftFastConnection, nil
-	case models.AnalyticsDatabaseRdsInternal:
-		return c.rdsInternalConnection, nil
 	case models.AnalyticsDatabaseRdsExternal:
 		return c.rdsExternalConnection, nil
 	case models.AnalyticsDatabaseSnowflake:
@@ -41,11 +38,6 @@ func New() (*Controller, error) {
 	redshiftFastConnection, err := db.NewRedshiftFastClient()
 	if err != nil {
 		mErrors = multierror.Append(mErrors, fmt.Errorf("redshift-fast-failed-init: %s", err.Error()))
-	}
-
-	rdsInternalConnection, err := db.NewRDSInternalClient()
-	if err != nil {
-		mErrors = multierror.Append(mErrors, fmt.Errorf("rds-internal-failed-init: %s", err.Error()))
 	}
 
 	rdsExternalConnection, err := db.NewRDSExternalClient()
@@ -67,7 +59,6 @@ func New() (*Controller, error) {
 	return &Controller{
 		redshiftFastConnection: redshiftFastConnection,
 		rdsExternalConnection:  rdsExternalConnection,
-		rdsInternalConnection:  rdsInternalConnection,
 		snowflakeConnection:    snowflakeConnection,
 		configChecks:           configChecks,
 	}, nil
