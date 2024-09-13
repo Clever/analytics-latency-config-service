@@ -1,10 +1,10 @@
-swagger: '2.1'
+swagger: '2.0'
 info:
   title: analytics-latency-config-service
   description: Service for surfacing latency config settings for the analytics pipeline.
   # when changing the version here, make sure to run
   # `make generate` to generate clients and server
-  version: 0.6.0
+  version: 0.7.0
   x-npm-package: '@clever/analytics-latency-config-service'
 schemes:
   - http
