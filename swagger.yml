@@ -1,4 +1,4 @@
-swagger: '2.0'
+swagger: '2.1'
 info:
   title: analytics-latency-config-service
   description: Service for surfacing latency config settings for the analytics pipeline.
