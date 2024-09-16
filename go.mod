@@ -4,6 +4,7 @@ go 1.21
 
 require (
 	github.com/Clever/analytics-latency-config-service/gen-go/models v0.0.0-00010101000000-000000000000
+	github.com/Clever/analytics-latency-config-service/gen-go/client v0.0.0-00010101000000-000000000000
 	github.com/Clever/go-process-metrics v0.4.0
 	github.com/Clever/kayvee-go/v7 v7.7.0
 	github.com/Clever/pq v0.2.0
@@ -108,3 +109,4 @@ exclude (
 
 // Do not delete: the following line allows for the server module to import the local version of the models without first publishing a new models module
 replace github.com/Clever/analytics-latency-config-service/gen-go/models => ./gen-go/models
+replace github.com/Clever/analytics-latency-config-service/gen-go/client => ./gen-go/client
