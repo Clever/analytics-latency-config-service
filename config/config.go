@@ -18,15 +18,7 @@ var (
 	RedshiftFastUsername string
 	RedshiftFastPassword string
 
-	// We also have two postgres Amazon RDS databases.
-	// One that's for internal use (e..g building blocks)
-	// And one that's for external use (e.g. district analytics.)
-	// RDSInternal* is the former
-	RDSInternalHost     string
-	RDSInternalPort     string
-	RDSInternalDatabase string
-	RDSInternalUsername string
-	RDSInternalPassword string
+	// We also have a postgres Amazon RDS databases for external use (e.g. district analytics.)
 
 	// RDSExternal* is the former
 	RDSExternalHost     string
@@ -74,12 +66,6 @@ func InitDBs() {
 	RedshiftFastDatabase = requiredEnv("REDSHIFT_FAST_DATABASE")
 	RedshiftFastUsername = requiredEnv("REDSHIFT_FAST_USER")
 	RedshiftFastPassword = requiredEnv("REDSHIFT_FAST_PASSWORD")
-
-	RDSInternalHost = requiredEnv("RDS_INTERNAL_HOST")
-	RDSInternalPort = requiredEnv("RDS_INTERNAL_PORT")
-	RDSInternalDatabase = requiredEnv("RDS_INTERNAL_DATABASE")
-	RDSInternalUsername = requiredEnv("RDS_INTERNAL_USER")
-	RDSInternalPassword = requiredEnv("RDS_INTERNAL_PASSWORD")
 
 	RDSExternalHost = requiredEnv("RDS_EXTERNAL_HOST")
 	RDSExternalPort = requiredEnv("RDS_EXTERNAL_PORT")
