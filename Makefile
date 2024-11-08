@@ -34,6 +34,11 @@ build: generate
 	$(call golang-build,$(PKG),$(EXECUTABLE))
 
 run: build
+	SNOWFLAKE_USER=$(SNOWFLAKE_USER_OVERRIDE) \
+	SNOWFLAKE_DATABASE="DEV_QUICKBLOCKS_DB" \
+	SNOWFLAKE_WAREHOUSE="PROD_ENG_XS_WH" \
+	SNOWFLAKE_ROLE="CLEVER_ENG_ROLE" \
+	SNOWFLAKE_AUTHENTICATOR="externalbrowser" \
 	bin/$(EXECUTABLE)
 
 generate: wag-generate-deps
