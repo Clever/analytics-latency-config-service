@@ -19,6 +19,17 @@ We also need to be careful, since ALCS should not be taking a long time to deter
 
 - Implement aforementioned business logic so that code will build
 
+- Sample requests:
+  - localhost:6723/legacy_config
+  - localhost:6723/latency
+    ```
+    {
+        "table": "district_vw",
+        "schema": "public",
+        "database": "Snowflake"
+    }
+    ```
+
 ## Declaring New Latency Checks
 Defining checks in analytics-latency-config-service can be accomplished by adding a new entry to `config/latency_config.json` in the following format:
 
