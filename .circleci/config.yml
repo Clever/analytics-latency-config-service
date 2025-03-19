@@ -4,7 +4,7 @@ executors:
   common-executor:
     working_directory: ~/go/src/github.com/Clever/analytics-latency-config-service
     docker:
-      - image: cimg/go:1.21-node
+      - image: cimg/go:1.24-node
       - image: circleci/postgres:9.4-alpine-ram
         environment:
           GOPRIVATE: github.com/Clever/*
