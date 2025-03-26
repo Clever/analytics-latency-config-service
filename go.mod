@@ -1,6 +1,6 @@
 module github.com/Clever/analytics-latency-config-service
 
-go 1.21
+go 1.24
 
 require (
 	github.com/Clever/analytics-latency-config-service/gen-go/models v0.0.0-00010101000000-000000000000
@@ -12,12 +12,11 @@ require (
 	github.com/go-errors/errors v1.1.1
 	github.com/go-openapi/strfmt v0.21.2
 	github.com/go-openapi/swag v0.21.1
-	github.com/golang/mock v1.6.0
+	github.com/google/uuid v1.3.1
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
-	github.com/kevinburke/go-bindata v3.21.0+incompatible
 	github.com/snowflakedb/gosnowflake v1.12.0
 	github.com/stretchr/testify v1.8.4
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.34.0
@@ -74,6 +73,7 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/flatbuffers v23.5.26+incompatible // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3 // indirect
@@ -81,6 +81,7 @@ require (
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
+	github.com/kevinburke/go-bindata v3.24.0+incompatible // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
@@ -131,3 +132,8 @@ exclude (
 replace github.com/Clever/analytics-latency-config-service/gen-go/models => ./gen-go/models
 
 replace github.com/Clever/analytics-latency-config-service/gen-go/client => ./gen-go/client
+
+tool (
+	github.com/golang/mock/mockgen
+	github.com/kevinburke/go-bindata/go-bindata
+)
